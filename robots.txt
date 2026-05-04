@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mimic-trainer.mityasky.workers.dev/sitemap.xml
