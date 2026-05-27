@@ -1,0 +1,3335 @@
+:root {
+  /* Светлая тема */
+  --bg: #f8f9fa;
+  --bg-card: #ffffff;
+  --text: #212529;
+  --text-secondary: #6c757d;
+--primary: #4361ee;
+--primary-hover: #3a56d4;
+  --success: #2ecc71;
+  --warning: #f72585;
+  --danger: #e74c3c;
+  --border: #dee2e6;
+  --shadow: 0 4px 12px rgba(0,0,0,0.08);
+  --camera-bg: #f1f3f5;
+}
+
+/* Тёмная тема */
+[data-theme="dark"] {
+  --bg: #1a1a2e;
+  --bg-card: #16213e;
+  --text: #eaeaea;
+  --text-secondary: #a0a0b0;
+  --primary: #5a76ff;
+  --primary-hover: #6e88ff;
+  --success: #4ade80;
+  --warning: #ff6b9d;
+  --danger: #ff6b6b;
+  --border: #2a3a5a;
+  --shadow: 0 4px 12px rgba(0,0,0,0.3);
+  --camera-bg: #0f1629;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  padding: 12px;
+  max-width: 700px;
+  margin: 0 auto;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ===== ШАПКА ===== */
+.app-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 24px;
+  margin-bottom: 16px;
+  position: relative; /* Важно для абсолютного позиционирования центра */
+  justify-content: space-between; /* Распределяем пространство */
+}
+
+.app-header h1 {
+  font-size: 25px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #4361ee, #f72585, #4cc9f0, #4361ee);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradientShift 5s ease infinite;
+  letter-spacing: 0.4px;
+  line-height: 1.2;
+}
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.app-header h1:hover {
+  animation-duration: 2s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-header h1 {
+    animation: none;
+    background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  }
+}
+
+/* ===== КАРТОЧКИ ===== */
+.card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: background 0.3s, border-color 0.3s;
+}
+
+/* ===== ЦЕЛЕВАЯ ЭМОЦИЯ С КНОПКАМИ ===== */
+#target-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+}
+
+
+
+.nav-btn {
+  width: 100%;              /* ← было 48px, теперь 100% от контейнера */
+  height: 48px;             /* ← Высота осталась прежней */
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+  padding: 0;
+}
+
+.nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(67, 97, 238, 0.5);
+  filter: brightness(1.05);
+}
+
+.nav-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+  filter: brightness(0.95);
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ✅ ИСПРАВЛЕНО: Стили для целевой эмоции */
+.target-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  text-align: center;
+}
+
+#emotion-image {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 2px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: border-color 0.3s, box-shadow 0.3s;
+  display: block;  /* ← ДОБАВЛЕНО: гарантируем отображение */
+}
+
+#emotion-image:hover {
+  border-color: var(--primary);
+  box-shadow: 0 6px 16px rgba(67, 97, 238, 0.3);
+}
+
+#emotion-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+/* ===== КАМЕРА ===== */
+.camera-wrapper {
+  position: relative;
+  background: var(--camera-bg);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Видео заполняет обёртку */
+#camera-feed {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  transition: max-width 0.3s ease;
+}
+
+#body-segmentation-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  border-radius: 12px;
+  filter: drop-shadow(0 0 4px var(--primary));
+  mix-blend-mode: screen;
+  transform: scaleX(-1);
+}
+
+/* ===== ЕДИНАЯ ПАНЕЛЬ УПРАВЛЕНИЯ ===== */
+.camera-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: rgba(0,0,0,0.03);
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+[data-theme="dark"] .camera-controls {
+  background: rgba(255,255,255,0.05);
+}
+
+/* Кнопки камеры (слева) */
+.cam-buttons {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.cam-buttons button {
+  padding: 8px 14px;
+  font-size: 13px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+#btn-start-cam {
+  background: var(--success);
+  color: white;
+}
+
+#btn-stop-cam {
+  background: var(--danger);
+  color: white;
+}
+
+.cam-buttons button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.cam-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Баллы (по центру) */
+.score-display {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  flex: 1;
+  justify-content: center;
+  min-width: 80px;
+}
+
+.score-label {
+  color: var(--text-secondary);
+}
+
+.score-value {
+  color: var(--warning);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Распознанная эмоция (справа) */
+.detected-emotion {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  flex: 1;
+  justify-content: flex-end;
+  min-width: 140px;
+}
+
+.detected-label {
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.detected-value {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--primary);
+  white-space: nowrap;
+}
+
+/* Обратная связь */
+.feedback {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 10px;
+  min-height: 32px;
+  border-top: 1px dashed var(--border);
+  margin-top: 8px;
+}
+
+.feedback.correct {
+  background: rgba(46, 204, 113, 0.15);
+  color: var(--success);
+}
+
+.feedback.incorrect {
+  background: rgba(231, 76, 60, 0.12);
+  color: var(--danger);
+}
+
+/* Статус камеры */
+.status-badge {
+  position: absolute;
+  top: 12px;          /* ← ИЗМЕНЕНО: перемещаем вверх */
+  right: 12px;        /* ← ИЗМЕНЕНО: справа вместо слева */
+  font-size: 11px;
+  color: var(--success);
+  background: rgba(0, 0, 0, 0.6);
+  padding: 4px 10px;
+  border-radius: 8px;
+  display: none;
+  z-index: 20;        /* ← Поверх canvas и видео */
+  backdrop-filter: blur(4px);  /* ← Красивое размытие фона */
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ===== ДОП. КНОПКИ ===== */
+#extra-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+#extra-controls button {
+  padding: 8px 14px;
+  font-size: 13px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+#extra-controls button:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* ===== ФУТЕР ===== */
+footer {
+  text-align: center;
+  padding: 16px 8px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: auto;       /* Прижимает футер к нижней кромке экрана */
+  background: var(--bg);  /* Фон, чтобы контент не просвечивал */
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;         /* Запрещает сжатие футера */
+  z-index: 10;
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 500px) {
+  body { padding: 8px; }
+  
+  #target-section {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .nav-btn {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+  }
+  
+  #emotion-image {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .camera-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .cam-buttons {
+    justify-content: center;
+  }
+  
+  .score-display,
+  .detected-emotion {
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .detected-emotion {
+    border-top: 1px dashed var(--border);
+    padding-top: 8px;
+  }
+}
+
+/* ===== СНИЖЕННЫЕ АНИМАЦИИ ===== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ===== КНОПКА ТЕМЫ ===== */
+.theme-btn {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--text);
+  box-shadow: var(--shadow);
+  margin-left: auto;
+}
+
+.theme-btn:hover {
+  transform: scale(1.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 15px rgba(67, 97, 238, 0.4);
+}
+
+.theme-btn:active {
+  transform: scale(0.95);
+}
+
+/* Анимация переключения темы */
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.card, .camera-wrapper, #target-section {
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.app-icon {
+  display: inline-block;
+  font-size: 44px;              /* ↑ было 36px */
+  margin: 0;
+  animation: gentleFloat 3.5s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(67, 97, 238, 0.5)); /* ↑ мягкое свечение */
+  transition: transform 0.3s ease;
+  cursor: default;
+}
+
+.app-icon:hover {
+  transform: scale(1.08) rotate(3deg); /* лёгкий интерактив при наведении */
+}
+
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-6px) rotate(4deg); } /* ↑ амплитуда чуть больше */
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 500px) {
+  .app-icon {
+    font-size: 28px;
+    margin-right: 8px;
+  }
+}
+
+/* Плавный переход для видео */
+#camera-feed {
+  transition: max-width 0.3s ease;
+}
+
+/* Адаптивность для компактного режима */
+@media (max-width: 500px) {
+  #camera-feed {
+    max-width: 100% !important;
+	transform: scaleX(-1);
+  }
+    #body-segmentation-canvas {
+    transform: scaleX(-1); 
+  }
+}
+
+/* ===== КОНТЕЙНЕР КНОПОК В ШАПКЕ ===== */
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  margin-right: -170px;  /* ← небольшой отступ от правого края экрана */
+  flex-shrink: 0;
+}
+
+/* ===== КНОПКА ЯЗЫКА ===== */
+.lang-btn {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--text);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  line-height: 1;
+}
+
+.lang-btn:hover {
+  transform: scale(1.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 15px rgba(67, 97, 238, 0.4);
+}
+
+.lang-btn:active {
+  transform: scale(0.95);
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 500px) {
+  .app-icon {
+    font-size: 36px;   /* ↑ было 28px */
+  }
+  .app-header h1 {
+    font-size: 20px;   /* ↑ было 18–20px, фиксируем */
+  }
+  .app-header-center {
+    gap: 12px;
+  }
+}
+  
+  .lang-btn,
+  .theme-btn {
+    padding: 6px 10px;
+    font-size: 14px;
+    min-width: 38px;
+  }
+}
+
+/* ===== СТИЛИ ДЛЯ КНОПОК НАВИГАЦИИ ===== */
+.nav-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+  padding: 0;
+}
+
+.nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(67, 97, 238, 0.5);
+  filter: brightness(1.05);
+}
+
+.nav-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+  filter: brightness(0.95);
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.nav-icon {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.2s ease;
+}
+
+.nav-btn:hover .nav-icon {
+  transform: scale(1.1);
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 500px) {
+  .nav-btn {
+    width: 100%;            /* ← Оставляем на всю ширину */
+    height: 44px;           /* ← Чуть меньше высота на мобильных */
+    border-radius: 10px;
+  }
+  .nav-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Тёмная тема — небольшая корректировка тени */
+[data-theme="dark"] .nav-btn {
+  box-shadow: 0 4px 12px rgba(90, 118, 255, 0.4);
+}
+
+[data-theme="dark"] .nav-btn:hover {
+  box-shadow: 0 6px 20px rgba(90, 118, 255, 0.6);
+}
+
+/* ===== БОКОВЫЕ ПАНЕЛИ ===== */
+.side-panels-container {
+  position: fixed;
+  top: 14px;
+  left: 0;
+  z-index: 1100;
+  pointer-events: none;
+  display: flex;
+  padding: 0 12px;
+  max-width: 1400px;
+  margin: 0 auto;
+  /* Убрали justify-content: space-between, чтобы всё было слева */
+}
+.side-panel {
+  pointer-events: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column; 
+  gap: 8px;    
+  align-items: flex-start; 
+}
+.info-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow);
+  transition: all 0.2s ease;
+  white-space: nowrap;     /* ← Чтобы текст не переносился */
+}
+.info-btn:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+.info-icon { width: 18px; height: 18px; flex-shrink: 0; }
+
+.info-panel {
+  position: absolute;
+  top: 0;                 /* ← Открывается от верхней части боковой панели */
+  left: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  width: 400px;
+  max-height: calc(100vh - 80px); /* ← Гарантирует, что панель влезет в любую высоту экрана */
+  min-height: auto;        /* ← Убираем жёсткий минимум, чтобы не ломать адаптив */
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  pointer-events: none;
+}
+.side-panel-left .info-panel {
+  left: calc(100% + 45px); /* 100% = ширина кнопок, 12px = аккуратный зазор */
+}
+.side-panel-right .info-panel { right: auto; }
+
+.info-panel.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.info-panel-header {
+  position: sticky;
+  top: 0;
+  background: var(--bg-card);
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+.info-panel-header h3 { margin: 0; font-size: 16px; color: var(--primary); }
+.info-panel-close {
+  background: none; border: none; font-size: 24px; cursor: pointer; 
+  color: var(--text-secondary); padding: 0 4px; line-height: 1; transition: color 0.2s;
+}
+.info-panel-close:hover { color: var(--danger); }
+
+.info-panel-content { padding: 16px; }
+.info-panel-content h4 { margin: 16px 0 8px; font-size: 15px; color: var(--primary); }
+.info-panel-content h4:first-child { margin-top: 0; }
+.info-panel-content p, .info-panel-content li { font-size: 13px; line-height: 1.5; color: var(--text-secondary); margin-bottom: 8px; }
+.info-panel-content ul, .info-panel-content ol { padding-left: 18px; margin-bottom: 12px; }
+
+.info-note {
+  background: rgba(67, 97, 238, 0.1);
+  border-left: 3px solid var(--primary);
+  padding: 10px 12px;
+  border-radius: 0 8px 8px 0;
+  font-size: 13px;
+  margin-top: 12px;
+  color: var(--text);
+}
+
+.app-header-center {
+  position: absolute; /* Вырываем из потока */
+  left: 50%;          /* Сдвигаем на 50% */
+  transform: translateX(-50%); /* Центрируем точно по оси */
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  /* margin-left: auto и margin-right: auto здесь больше не нужны */
+}
+
+/* ===== ССЫЛКА НА АВТОРА В ФУТЕРЕ ===== */
+.author-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px dashed transparent;
+  transition: all 0.2s ease;
+  padding-bottom: 1px;
+}
+
+.author-link:hover {
+  color: var(--primary-hover);
+  border-bottom-color: var(--primary);
+}
+
+.author-link:visited {
+  color: var(--primary);
+}
+
+/* Тёмная тема */
+[data-theme="dark"] .author-link {
+  color: var(--primary-hover);
+}
+
+[data-theme="dark"] .author-link:hover {
+  color: #8a9bff;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+  .side-panel {
+    flex-direction: row; /* Оставляем в ряд, так как места хватает для иконок */
+    gap: 8px;
+  }
+  .info-btn span { 
+    display: none; /* Скрываем текст, оставляем иконки для экономии места */
+  }
+  .info-btn { 
+    padding: 8px 10px; 
+  }
+}
+
+.privacy-version { font-size: 11px; color: var(--text-secondary); text-align: center; margin-top: 16px; padding-top: 12px; border-top: 1px dashed var(--border); }
+
+/* ✅ Контейнер-обёртка для видео и контура */
+.video-overlay {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* ===== DESKTOP LAYOUT (только для экранов >= 768px) ===== */
+@media (min-width: 768px) {
+  /* Фиксируем высоту экрана и убираем скролл */
+  body {
+    max-width: 1200px;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+
+  .app-header { flex-shrink: 0; margin-bottom: 16px; }
+  footer { flex-shrink: 0; padding-top: 10px; }
+
+  /* Основной контейнер-сетка */
+  .desktop-layout {
+    display: flex;
+    flex: 1;
+    gap: 20px;
+    align-items: stretch;
+    min-height: 0; /* Критично для flex-дочерних элементов */
+  }
+
+  /* ЛЕВАЯ ПАНЕЛЬ: Целевая эмоция */
+  #target-section {
+    flex: 0 0 340px; /* Фиксированная ширина */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: var(--bg-card);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    gap: 16px;
+  }
+
+  #emotion-image {
+    width: 260px;
+    height: 260px;
+    border-radius: 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  }
+
+  #emotion-name {
+    font-size: 22px;
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  /* ПРАВАЯ ПАНЕЛЬ: Камера */
+  .camera-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    padding: 0;
+    min-height: 0;
+  }
+
+  .video-overlay {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--camera-bg);
+    border-radius: 16px 16px 0 0;
+    overflow: hidden;
+    max-width: none; /* Снимаем мобильное ограничение */
+    margin: 0;
+  }
+
+  #camera-feed {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    object-fit: cover;
+    border-radius: 0;
+	transform: scaleX(-1);
+  }
+
+  .camera-controls {
+    flex-shrink: 0;
+    border-top: 1px solid var(--border);
+    border-radius: 0 0 16px 16px;
+    margin: 0;
+    padding: 12px 16px;
+  }
+
+  #feedback {
+    flex-shrink: 0;
+    border-top: 1px dashed var(--border);
+    margin: 0;
+    border-radius: 0;
+    padding: 10px 16px;
+  }
+}
+
+/* ===== ИНДИКАТОР ЗАГРУЗКИ ===== */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(26, 26, 46, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.loading-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.loading-content {
+  text-align: center;
+  color: white;
+  padding: 30px;
+}
+
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(90, 118, 255, 0.3);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-content p {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #eaeaea;
+}
+
+.loading-content small {
+  font-size: 13px;
+  color: #a0a0b0;
+  opacity: 0.8;
+}
+
+/* ===== ИНДИКАТОР НИЗКОГО ОСВЕЩЕНИЯ ===== */
+.warning-overlay {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(231, 76, 60, 0.95);
+  color: white;
+  padding: 14px 24px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  max-width: 90%;
+  text-align: center;
+}
+
+.warning-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.warning-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.warning-icon {
+  font-size: 32px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.warning-content p {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.warning-content button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.warning-content button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 500px) {
+  .loading-content p {
+    font-size: 16px;
+  }
+  
+  .warning-overlay {
+    bottom: 80px;
+    padding: 12px 18px;
+  }
+  
+  .warning-content p {
+    font-size: 13px;
+  }
+}
+
+/* Тёмная тема */
+[data-theme="dark"] .loading-overlay {
+  background: rgba(10, 10, 20, 0.95);
+}
+
+/* ===== КНОПКА ЗВУКА ===== */
+#btn-sound-toggle {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+}
+
+#btn-sound-toggle:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+}
+
+#btn-sound-toggle:active {
+  transform: translateY(0);
+}
+
+/* Состояние "звук выключен" */
+#btn-sound-toggle.muted {
+  opacity: 0.7;
+  border-color: var(--text-secondary);
+}
+
+/* Адаптив для мобильных */
+@media (max-width: 500px) {
+  #btn-sound-toggle {
+    padding: 8px 10px;
+    font-size: 14px;
+    min-width: 40px;
+  }
+}
+
+/* ===== ПОЛЗУНОК СЛОЖНОСТИ ===== */
+/* ===== ВАРИАНТ 2: НЕОНОВЫЙ / GLASS ===== */
+.difficulty-panel {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  z-index: 20; padding: 14px 10px; background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.4); border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+[data-theme="dark"] .difficulty-panel { background: rgba(15,20,35,0.85); border-color: rgba(255,255,255,0.1); box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(90,118,255,0.2); }
+.diff-label-top, .diff-label-bottom { font-size: 10px; font-weight: 600; color: var(--text-secondary); }
+.slider-wrapper { height: 120px; display: flex; align-items: center; justify-content: center; }
+#difficulty-slider { width: 110px; height: 6px; transform: rotate(-90deg); background: transparent; cursor: pointer; touch-action: none; -webkit-appearance: none; appearance: none; }
+#difficulty-slider::-webkit-slider-runnable-track { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, #00d4ff 100%); border-radius: 3px; opacity: 0.6; }
+#difficulty-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: white; border: 2px solid var(--primary); border-radius: 50%; margin-top: -7px; cursor: pointer; box-shadow: 0 0 14px var(--primary), 0 2px 6px rgba(0,0,0,0.2); transition: box-shadow 0.2s; }
+#difficulty-slider::-webkit-slider-thumb:hover { box-shadow: 0 0 20px #00d4ff, 0 0 8px var(--primary); }
+#difficulty-slider::-moz-range-track { height: 6px; background: linear-gradient(90deg, var(--primary) 0%, #00d4ff 100%); border-radius: 3px; opacity: 0.6; border: none; }
+#difficulty-slider::-moz-range-thumb { width: 20px; height: 20px; background: white; border: 2px solid var(--primary); border-radius: 50%; cursor: pointer; box-shadow: 0 0 14px var(--primary); }
+
+.diff-info-btn { background: linear-gradient(135deg, var(--primary), #00d4ff); color: white; border: none; border-radius: 10px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; box-shadow: 0 4px 12px rgba(90,118,255,0.4); transition: transform 0.2s; }
+.diff-info-btn:hover { transform: scale(1.1) rotate(5deg); }
+
+.difficulty-tooltip { position: absolute; right: 115%; top: 50%; transform: translateY(-50%); background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 12px; line-height: 1.4; width: 190px; box-shadow: var(--shadow); opacity: 0; visibility: hidden; transition: all 0.2s ease; pointer-events: none; z-index: 30; }
+.difficulty-tooltip.active { opacity: 1; visibility: visible; pointer-events: auto; }
+.difficulty-tooltip::after { content: ''; position: absolute; left: 100%; top: 50%; transform: translateY(-50%); border: 6px solid transparent; border-left-color: var(--bg-card); }
+@media (max-width: 500px) { .difficulty-tooltip { right: auto; left: 50%; bottom: 115%; top: auto; transform: translateX(-50%); } .difficulty-tooltip::after { left: 50%; top: 100%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: var(--bg-card); border-left-color: transparent; } }
+
+/* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
+@media (max-width: 500px) {
+  /* 1. Скрываем панель сложности */
+  .difficulty-panel {
+    display: none !important;
+  }
+
+  /* 2. Кнопки языка и темы: фиксация справа по вертикали */
+  .header-controls {
+    position: absolute !important;
+    top: 50% !important;
+    right: 12px !important;
+    transform: translateY(-50%) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 50;
+    gap: 6px !important;
+  }
+
+  /* 3. Блок с иконкой и названием: жёсткий центр */
+  .app-header-center {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    max-width: 55%; /* Защита от наложения на кнопки при длинном тексте */
+    text-align: center;
+  }
+
+  /* 4. Настройка заголовка под мобильный экран */
+  .app-header h1 {
+    font-size: 17px !important;
+    line-height: 1.2 !important;
+    white-space: normal !important; /* Разрешаем перенос строк */
+    word-break: break-word;
+  }
+
+  /* 5. Убираем асимметричные отступы шапки (центр считается честно) */
+  .app-header {
+    padding: 10px 12px !important;
+    justify-content: flex-start !important;
+  }
+
+  /* 6. Компактные кнопки */
+  .lang-btn, .theme-btn {
+    padding: 5px 8px !important;
+    font-size: 13px !important;
+    min-width: 36px !important;
+  }
+}
+
+
+/* ===== МОДАЛЬНОЕ ОКНО ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+.modal-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: var(--shadow);
+  position: relative;
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+.modal-overlay.active .modal-content { transform: translateY(0); }
+
+.modal-close {
+  position: absolute;
+  top: 12px; right: 12px;
+  background: none; border: none;
+  font-size: 24px; color: var(--text-secondary);
+  cursor: pointer; transition: color 0.2s;
+}
+.modal-close:hover { color: var(--danger); }
+
+.modal-content h2 {
+  margin: 0 0 20px;
+  font-size: 18px;
+  color: var(--text);
+  line-height: 1.4;
+  text-align: center;
+}
+#feedback-form { display: flex; flex-direction: column; gap: 12px; }
+#feedback-form input, #feedback-form textarea {
+  width: 100%; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--bg); color: var(--text);
+  font-family: inherit; font-size: 14px;
+  transition: border-color 0.2s; box-sizing: border-box;
+}
+#feedback-form input:focus, #feedback-form textarea:focus {
+  outline: none; border-color: var(--primary);
+}
+.modal-submit-btn {
+  padding: 10px; border: none; border-radius: 8px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  color: white; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.modal-submit-btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.modal-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* Адаптив */
+@media (max-width: 500px) {
+  .feedback-btn { bottom: 16px; left: 16px; font-size: 13px; padding: 8px 12px; }
+  .modal-content { width: 95%; padding: 20px; }
+}
+
+/* ===== УПРОЩЁННОЕ МОДАЛЬНОЕ ОКНО ===== */
+.feedback-modal-simple {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+.feedback-modal-simple .modal-submit-btn {
+  width: auto;
+  min-width: 150px;
+  margin-top: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+}
+
+/* ===== КНОПКА ДОНАТА ===== */
+.donate-btn {
+  position: fixed; bottom: 20px; right: 20px; z-index: 999;
+  padding: 10px 16px; border-radius: 12px; border: none;
+  background: linear-gradient(135deg, #ff6b9d, #f72585);
+  color: white; font-size: 14px; font-weight: 600; cursor: pointer;
+  box-shadow: var(--shadow); transition: all 0.2s ease;
+  display: flex; align-items: center; gap: 6px;
+}
+.donate-btn:hover {
+  transform: translateY(-2px); filter: brightness(1.1);
+  box-shadow: 0 6px 16px rgba(247, 37, 133, 0.4);
+}
+.donate-btn:active { transform: translateY(0); }
+
+/* ===== МОДАЛЬНОЕ ОКНО ДОНАТА ===== */
+.donate-modal { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.donate-desc { margin: 0; font-size: 14px; color: var(--text-secondary); line-height: 1.4; max-width: 320px; }
+.donate-methods { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 280px; }
+.donate-link-btn {
+  display: block; padding: 12px; border-radius: 10px; text-decoration: none;
+  background: var(--bg); border: 1px solid var(--border); color: var(--text);
+  font-weight: 600; transition: all 0.2s; text-align: center; cursor: pointer;
+}
+.donate-link-btn:hover { background: var(--primary); color: white; border-color: var(--primary); transform: translateY(-1px); }
+.sbp-qr-container { margin-top: 12px; text-align: center; animation: fadeIn 0.3s ease; }
+.sbp-qr-img { width: 180px; height: auto; border-radius: 12px; border: 1px solid var(--border); padding: 8px; background: white; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 500px) {
+  .donate-btn { bottom: 16px; right: 16px; font-size: 13px; padding: 8px 12px; }
+  .donate-modal { width: 95%; padding: 20px; }
+  .sbp-qr-img { width: 150px; }
+}
+
+.wallet-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 4px 0 0;
+  text-align: center;
+  line-height: 1.3;
+  opacity: 0.9;
+}
+
+/* ===== ONBOARDING OVERLAY ===== */
+.onboarding-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(26, 26, 46, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20000;
+  padding: 20px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.onboarding-overlay[hidden] {
+  display: none !important;
+}
+
+.onboarding-modal {
+  background: var(--bg-card);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(30px) scale(0.98); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+/* Кнопка закрытия */
+.onboarding-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.onboarding-close:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+  transform: scale(1.1);
+}
+
+/* Заголовок */
+.onboarding-header {
+  padding: 24px 24px 16px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.onboarding-icon {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 8px;
+  animation: gentleFloat 3s ease-in-out infinite;
+}
+
+.onboarding-header h2 {
+  font-size: 20px;
+  color: var(--text);
+  margin: 0;
+  font-weight: 700;
+}
+
+/* Контейнер шагов */
+.onboarding-steps {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 24px;
+  position: relative;
+}
+
+.onboarding-step {
+  display: none;
+  animation: fadeStep 0.3s ease-out;
+}
+
+.onboarding-step.active {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+@keyframes fadeStep {
+  from { opacity: 0; transform: translateX(10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.step-number {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
+}
+
+.step-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.step-content p {
+  margin: 0 0 12px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.step-content strong {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Подсказки и визуальные элементы */
+.step-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 8px 12px;
+  background: var(--bg);
+  border-radius: 8px;
+  border-left: 3px solid var(--primary);
+}
+
+.hint-arrow {
+  width: 16px;
+  height: 16px;
+  color: var(--primary);
+  animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.step-image-preview {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.preview-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.step-visual {
+  text-align: center;
+  padding: 8px 0;
+}
+
+.emoji-large {
+  font-size: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.step-animation {
+  text-align: center;
+  padding: 8px 0;
+}
+
+.star-burst {
+  font-size: 24px;
+  display: inline-block;
+  animation: starPop 0.6s ease-out;
+}
+
+@keyframes starPop {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.step-arrows {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.demo-arrow {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: var(--bg-card);
+  font-size: 18px;
+  cursor: default;
+  transition: all 0.2s;
+}
+
+.demo-arrow:hover {
+  border-color: var(--primary);
+  transform: scale(1.05);
+}
+
+/* Футер с навигацией */
+.onboarding-footer {
+  padding: 16px 24px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.step-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dot.active {
+  background: var(--primary);
+  transform: scale(1.2);
+}
+
+.dot:hover {
+  background: var(--primary-hover);
+}
+
+.onboarding-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.onboarding-btn {
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.onboarding-btn.primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  color: white;
+  box-shadow: 0 4px 14px rgba(67, 97, 238, 0.4);
+}
+
+.onboarding-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(67, 97, 238, 0.6);
+  filter: brightness(1.05);
+}
+
+.onboarding-btn.primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+
+.onboarding-btn.secondary {
+  background: var(--bg);
+  color: var(--text);
+  border: 2px solid var(--border);
+}
+
+.onboarding-btn.secondary:hover {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: white;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 500px) {
+  .onboarding-modal {
+    max-width: 100%;
+    border-radius: 16px;
+  }
+  
+  .onboarding-header {
+    padding: 20px 20px 12px;
+  }
+  
+  .onboarding-header h2 {
+    font-size: 18px;
+  }
+  
+  .onboarding-steps {
+    padding: 12px 20px;
+  }
+  
+  .step-content p {
+    font-size: 14px;
+  }
+  
+  .onboarding-footer {
+    padding: 12px 20px 20px;
+  }
+  
+  .onboarding-btn {
+    padding: 9px 20px;
+    font-size: 13px;
+  }
+}
+
+/* Тёмная тема */
+[data-theme="dark"] .onboarding-overlay {
+  background: rgba(10, 10, 20, 0.95);
+}
+
+[data-theme="dark"] .onboarding-modal {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+/* ===== МОДАЛКА ОТЗЫВОВ — ПОЛНОЭКРАННАЯ ===== */
+#reviews-modal .modal-content.reviews-modal {
+  width: 95vw;              /* ← Почти полная ширина экрана */
+  max-width: 900px;         /* ← Но не больше 900px на больших экранах */
+  height: 92vh;             /* ← Почти полная высота */
+  max-height: none;         /* ← Снимаем ограничение */
+  border-radius: 16px;
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Заголовок и описание — фиксированная высота */
+#reviews-modal h2 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+#reviews-modal .reviews-desc {
+  margin: 0 0 12px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* Контейнер виджета — занимает всё оставшееся место с прокруткой */
+#reviews-modal #cusdis_thread {
+  flex: 1;                  /* ← Растягивается на всё доступное пространство */
+  min-height: 0;            /* ← Критично для flex-контейнера с прокруткой */
+  overflow-y: auto;         /* ← Прокрутка только внутри виджета */
+  border-top: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 8px 8px;
+  background: var(--bg);
+}
+
+/* Стили для iframe/контента Cusdis внутри */
+#reviews-modal #cusdis_thread iframe,
+#reviews-modal #cusdis_thread .cusdis-wrapper {
+  width: 100% !important;
+  min-height: 100%;
+}
+
+/* Кнопка закрытия — позиционируем в правом верхнем углу контента */
+#reviews-modal .modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+}
+
+/* Адаптивность для мобильных  */
+@media (max-width: 768px) {
+  #reviews-modal .modal-content.reviews-modal {
+    width: 98vw;
+    height: 95vh;
+    border-radius: 12px;
+    padding: 16px;
+  }
+  #reviews-modal h2 {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 500px) {
+  #reviews-modal .modal-content.reviews-modal {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    padding: 12px;
+  }
+  #reviews-modal .modal-close {
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+  }
+}
+
+/* Тёмная тема — корректные цвета для Cusdis */
+[data-theme="dark"] #reviews-modal #cusdis_thread {
+  --cusdis-bg: var(--bg-card);
+  --cusdis-fg: var(--text);
+  --cusdis-fg-secondary: var(--text-secondary);
+  --cusdis-border: var(--border);
+  --cusdis-primary: var(--primary);
+  background: #121212;
+}
+
+/* Дополнительные отступы для вертикальных кнопок на мобильных */
+@media (max-width: 500px) {
+  .side-panel {
+    gap: 6px;
+  }
+  .info-btn {
+    padding: 7px 10px;
+    font-size: 13px;
+  }
+  .info-panel {
+    width: 280px; /* ← чуть уже на мобильных */
+    font-size: 12px;
+  }
+}
+
+/* Гарантированный приоритет для открытых панелей */
+.info-panel.active {
+  z-index: 10001 !important; /* Чуть выше, чем у обычных модалок */
+  pointer-events: auto;      /* Убеждаемся, что панель интерактивна */
+}
+
+/* Стиль для рекорда */
+.high-score-value {
+  font-size: 14px;
+  color: var(--warning);
+  margin-left: 8px;
+  padding: 4px 8px;
+  background: rgba(247, 37, 133, 0.12);
+  border-radius: 6px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: transform 0.2s, background 0.2s;
+}
+/* Анимация при обновлении рекорда */
+.high-score-value.new-record {
+  background: rgba(247, 37, 133, 0.25);
+  transform: scale(1.05);
+}
+/* Мобильная адаптация */
+@media (max-width: 500px) {
+  .high-score-value { font-size: 12px; padding: 3px 6px; margin-left: 4px; }
+}
+
+/* ===== УВЕДОМЛЕНИЕ О РЕКОРДЕ (ВНУТРИ КАМЕРЫ) ===== */
+.record-notification {
+  position: absolute;
+  bottom: 75px; /* Над панелью управления */
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #1a1a2e;
+  padding: 14px 32px;
+  border-radius: 18px;
+  font-size: 26px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.6), 0 0 0 3px rgba(255, 255, 255, 0.5);
+  z-index: 55;
+  pointer-events: none;
+  white-space: nowrap;
+  backdrop-filter: blur(6px);
+  animation: recordPopIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.record-notification[hidden] {
+  display: none;
+  animation: none;
+}
+
+.record-icon {
+  font-size: 32px;
+  animation: trophyBounce 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes recordPopIn {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.4) translateY(20px); }
+  70% { transform: translateX(-50%) scale(1.05) translateY(-5px); }
+  100% { opacity: 1; transform: translateX(-50%) scale(1) translateY(0); }
+}
+
+@keyframes trophyBounce {
+  0% { transform: scale(1) rotate(-6deg); }
+  100% { transform: scale(1.15) rotate(6deg); }
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 500px) {
+  .record-notification {
+    bottom: 65px;
+    font-size: 20px;
+    padding: 10px 22px;
+    border-radius: 14px;
+  }
+  .record-icon { font-size: 26px; }
+}
+/* ===== РЕЖИМ ДУЭТ ===== */
+.duel-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+}
+#duel-modal {
+  z-index: 30000; /* Поверх всего */
+  background: #000;
+}
+#duel-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* Зеркалим как селфи */
+}
+#duel-ui-layer {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+  color: white;
+  text-align: center;
+  pointer-events: none; /* Чтобы клики проходили сквозь слой */
+}
+#duel-status-text {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+.duel-btn-large {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px 40px;
+  font-size: 24px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(67, 97, 238, 0.6);
+  z-index: 10;
+}
+.duel-btn-large:hover { filter: brightness(1.1); }
+
+/* Результаты */
+#duel-result-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 30px;
+  margin: 0 auto;
+  max-width: 400px;
+  pointer-events: auto; /* Включаем клики для кнопок */
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes popIn {
+  from { transform: scale(0.5); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+#result-score { font-size: 64px; font-weight: 800; margin-bottom: 10px; }
+#result-text { font-size: 20px; margin-bottom: 20px; opacity: 0.9; }
+
+.duel-btn-primary, .duel-btn-secondary {
+  padding: 12px 24px; border-radius: 10px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; margin: 5px;
+}
+.duel-btn-primary { background: var(--success); color: white; }
+.duel-btn-secondary { background: rgba(255,255,255,0.2); color: white; }
+
+.hidden { display: none !important; }
+
+/* Адаптив для дуэта */
+@media (max-width: 600px) {
+  #duel-status-text { font-size: 18px; }
+  #result-score { font-size: 48px; }
+}
+
+/* ===== КНОПКА ДУЭТ ===== */
+#btn-duel-mode {
+  position: absolute;
+  right: 24px;                          /* Выравниваем по правому краю как панель */
+  top: calc(50% + 125px);               /* 50% (центр) + половина высоты панели (~140px/2) + отступ */
+  transform: translateX(0);             /* Сбрасываем transform, чтобы не наследовать от родителя */
+  z-index: 20;
+  
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  width: 110px;                         /* Такая же ширина как у слайдера */
+}
+
+#btn-duel-mode:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+  filter: brightness(1.05);
+}
+
+#btn-duel-mode:active {
+  transform: translateY(0);
+  filter: brightness(0.95);
+}
+
+#btn-duel-mode:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Тёмная тема */
+[data-theme="dark"] #btn-duel-mode {
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+[data-theme="dark"] #btn-duel-mode:hover {
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+/* Скрываем на мобильных (как и панель сложности) */
+@media (max-width: 500px) {
+  #btn-duel-mode {
+    display: none !important;
+  }
+}
+
+/* ===== КНОПКА ЗАКРЫТИЯ ДУЭТ-РЕЖИМА ===== */
+.duel-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: all 0.2s ease;
+  padding: 0;
+  line-height: 1;
+  backdrop-filter: blur(4px);
+}
+
+.duel-close-btn:hover {
+  background: rgba(231, 76, 60, 0.9);
+  border-color: #e74c3c;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+}
+
+.duel-close-btn:active {
+  transform: scale(0.95);
+}
+
+/* Адаптив для мобильных */
+@media (max-width: 600px) {
+  .duel-close-btn {
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+  }
+}
+
+[data-theme="dark"] #reviews-modal .modal-content.reviews-modal {
+background: #121212;
+border: 1px solid #222;
+}
+
+.app-icon, .onboarding-icon {
+  filter: drop-shadow(0 0 10px var(--primary)); /* Свечение в тон темы */
+}
+
+.app-icon {
+  display: inline-block;
+  width: 44px;
+  height: 44px;
+  margin-right: 12px;
+  animation: gentleFloat 3.5s ease-in-out infinite;
+  transition: transform 0.3s ease;
+}
+
+/* Убираем лишнее свечение у SVG, так как у него свои цвета */
+.app-icon svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 8px rgba(67, 97, 238, 0.4));
+}
+
+.info-panel-content h4 {
+  margin: 20px 0 10px;
+  font-size: 14px;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.info-panel-content h4:first-child {
+  margin-top: 0;
+}
+.info-panel-content ul {
+  padding-left: 20px;
+  margin-bottom: 16px;
+}
+.info-panel-content li {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+/* ===== СТИЛИ ДЛЯ НАУЧНЫХ СТАТЕЙ ===== */
+.science-article {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--bg);
+  border-radius: 10px;
+  border-left: 3px solid var(--primary);
+  transition: all 0.2s;
+}
+
+.science-article:hover {
+  box-shadow: var(--shadow);
+  transform: translateX(2px);
+}
+
+.science-article h4 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.article-authors {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 4px 0;
+  font-style: italic;
+}
+
+.article-journal {
+  font-size: 13px;
+  color: var(--primary);
+  margin: 4px 0 8px;
+  font-weight: 500;
+}
+
+.article-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 8px 0;
+}
+
+.article-link {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: var(--primary);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.article-link:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
+}
+
+.science-intro {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+  margin-bottom: 20px;
+  padding: 12px;
+  background: rgba(67, 97, 238, 0.05);
+  border-radius: 8px;
+}
+
+.bottom-fixed-btn {
+  position: fixed;
+  z-index: 999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+#feedback-btn { bottom: 20px; left: 20px; }
+#reviews-btn  { bottom: 72px; left: 20px; }
+
+@media (max-width: 500px) {
+  #feedback-btn { bottom: 16px; left: 16px; }
+  #reviews-btn  { bottom: 64px; left: 16px; }
+}
+
+/* ===== FALLBACK OVERLAY (КРИТИЧЕСКИЕ ОШИБКИ) ===== */
+.critical-fallback-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 46, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50000;
+  padding: 20px;
+}
+.critical-fallback-overlay[hidden] { display: none !important; }
+.critical-fallback-content {
+  background: var(--bg-card);
+  border: 2px solid var(--danger);
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-align: center;
+  max-width: 420px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  animation: fallbackPop 0.3s ease-out;
+}
+@keyframes fallbackPop {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.critical-fallback-icon { font-size: 48px; margin-bottom: 12px; }
+.critical-fallback-content h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: var(--danger);
+}
+.critical-fallback-content p {
+  margin: 0 0 20px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+.fallback-btn {
+  padding: 12px 24px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fallback-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(67, 97, 238, 0.4);
+}
+
+/* ===== ИНДИКАТОР ОБНАРУЖЕНИЯ ЛИЦА ===== */
+.face-status-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  z-index: 25;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  border: 1px solid var(--border);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--danger);
+  transition: background 0.3s ease;
+  flex-shrink: 0;
+}
+
+/* Состояние: лицо обнаружено */
+.face-status-badge.detected .status-dot {
+  background: var(--success);
+  box-shadow: 0 0 8px var(--success);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.face-status-badge.detected .status-text {
+  color: var(--success);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.9); }
+}
+
+/* Адаптив для мобильных */
+@media (max-width: 500px) {
+  .face-status-badge {
+    top: 8px;
+    left: 8px;
+    padding: 5px 10px;
+    font-size: 11px;
+    gap: 6px;
+  }
+  .status-dot {
+    width: 7px;
+    height: 7px;
+  }
+}
+
+/* Тёмная тема — чуть более контрастный фон */
+[data-theme="dark"] .face-status-badge {
+  background: rgba(10, 15, 30, 0.7);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ===== КНОПКА УСТАНОВКИ PWA ===== */
+.install-btn {
+  bottom: 124px; /* Над кнопками отзывов и контакта */
+  left: 20px;
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: white;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  animation: gentlePulse 2s infinite alternate;
+  backdrop-filter: blur(8px);
+}
+
+.install-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 114, 255, 0.4);
+}
+
+.install-btn:active {
+  transform: translateY(0);
+}
+
+@keyframes gentlePulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 198, 255, 0.4); }
+  100% { box-shadow: 0 0 0 8px rgba(0, 198, 255, 0); }
+}
+
+/* Мобильная адаптация */
+@media (max-width: 500px) {
+  .install-btn {
+    bottom: 114px;
+    left: 16px;
+    padding: 7px 12px;
+    font-size: 13px;
+  }
+}
+
+/* ===== БАННЕР ОБНОВЛЕНИЯ ===== */
+.update-banner {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  border: 1px solid var(--primary);
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  z-index: 10002;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+.update-banner:not([hidden]) {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+.update-banner button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.update-banner button:hover {
+  background: var(--primary-hover);
+  transform: scale(1.05);
+}
+
+/* Мобильная адаптация */
+@media (max-width: 500px) {
+  .install-btn { bottom: 114px; left: 16px; padding: 8px 12px; font-size: 13px; }
+  .update-banner { width: 90%; justify-content: center; top: 16px; }
+}
+
+/* ===== LUMINOUS VIOLET / INDIGO GLASS ===== */
+.camera-wrapper {
+  background: linear-gradient(145deg, rgba(255,255,255,0.94), rgba(245,240,255,0.92));
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(109, 40, 217, 0.08), inset 0 1px 2px rgba(255,255,255,0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+}
+[data-theme="dark"] .camera-wrapper {
+  background: linear-gradient(145deg, rgba(20,15,40,0.95), rgba(10,5,25,0.9));
+  border-color: rgba(139, 92, 246, 0.12);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.55), 0 0 25px rgba(139, 92, 246, 0.06);
+}
+
+.video-overlay {
+  background: rgba(250,245,255,0.5);
+  border-radius: 20px;
+  box-shadow: inset 0 2px 8px rgba(139, 92, 246, 0.1), inset 0 0 0 1px rgba(139, 92, 246, 0.15);
+}
+[data-theme="dark"] .video-overlay {
+  background: rgba(15, 5, 30, 0.4);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(139, 92, 246, 0.06);
+}
+
+.camera-controls {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(139, 92, 246, 0.15);
+}
+[data-theme="dark"] .camera-controls {
+  background: rgba(255, 255, 255, 0.02);
+  border-top-color: rgba(139, 92, 246, 0.06);
+}
+
+.cam-buttons button {
+  background: rgba(139, 92, 246, 0.08);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(109, 40, 217, 0.08);
+  transition: all 0.25s ease;
+}
+[data-theme="dark"] .cam-buttons button {
+  background: rgba(139, 92, 246, 0.04);
+  border-color: rgba(139, 92, 246, 0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+#btn-start-cam { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; }
+#btn-stop-cam { background: linear-gradient(135deg, #f87171, #ef4444); color: white; border: none; }
+
+.cam-buttons button:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(109, 40, 217, 0.18);
+  border-color: rgba(139, 92, 246, 0.35);
+}
+
+.score-display, .detected-emotion {
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 12px;
+  color: var(--text);
+}
+[data-theme="dark"] .score-display, [data-theme="dark"] .detected-emotion {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(139, 92, 246, 0.08);
+}
+
+.score-value { color: #b45309; }
+.detected-value { color: #7c3aed; }
+
+/* ===== ГЛАВНЫЙ ЭКРАН (ПЛИТКИ) ===== */
+.home-screen {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 24px;
+  justify-content: center;
+  align-items: stretch;
+  width: 100%;
+  max-width: 95vw;       /* Контейнер растянут почти на весь экран */
+  margin: 40px auto 0;
+  padding: 0 20px;
+  min-height: 50vh;
+  flex: 1;               /* Занимает всё свободное место, толкая футер вниз */
+}
+.home-screen.hidden { display: none !important; }
+
+.mode-tile {
+  /* ИЗМЕНЕНО: 0 1 auto — разрешаем сжиматься, но запрещаем бесконечно растягиваться */
+  flex: 0 1 auto; 
+  
+  width: 100%;               /* Для корректной работы max-width */
+  max-width: 460px;          /* ← Ограничиваем ширину (было растяжение) */
+  min-height: 289px;         /* ← -15% от 340px */
+  
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;                 /* Чуть компактнее внутри */
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: var(--shadow);
+  padding: 34px 28px;        /* Пропорционально уменьшены отступы */
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.mode-tile:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: var(--primary);
+  box-shadow: 0 20px 40px rgba(67, 97, 238, 0.2);
+}
+.mode-tile:active { transform: translateY(-2px) scale(0.98); }
+
+.tile-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 12px;
+}
+
+/* Стилизация SVG */
+.tile-icon svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 8px 16px rgba(67, 97, 238, 0.15));
+}
+/* Убедитесь, что stroke в SVG использует переменную темы */
+.tile-icon svg path,
+.tile-icon svg circle {
+  stroke: var(--primary);
+  transition: stroke 0.3s ease;
+}
+.tile-text { display: flex; flex-direction: column; gap: 8px; text-align: center; }
+.tile-main { font-size: 32px; font-weight: 900; color: var(--text); letter-spacing: -0.5px; }
+.tile-sub { font-size: 18px; color: var(--text-secondary); font-weight: 500; }
+
+/* Кнопка "На главную" */
+/* ===== КНОПКА "НА ГЛАВНУЮ" ===== */
+.training-view { width: 100%; padding-top: 10px; }
+.back-to-home-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0;
+  background: var(--bg-card); border: 2px solid var(--border);
+  color: var(--text); width: 48px; height: 48px; padding: 0; border-radius: 50%;
+  font-size: 18px; cursor: pointer; overflow: hidden; white-space: nowrap;
+  margin-bottom: 16px; margin-left: 12px; transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+.back-to-home-btn:hover { background: var(--primary); color: white; border-color: var(--primary); transform: scale(1.08); }
+.back-to-home-btn:active { transform: scale(0.95); }
+
+/* Десктоп: круглая кнопка слева от панели эмоций */
+@media (min-width: 768px) {
+  .back-to-home-btn {
+    position: fixed;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    margin: 0;
+  }
+  .back-to-home-btn:hover { transform: translateY(-50%) scale(1.08); }
+  .back-to-home-btn:active { transform: translateY(-50%) scale(0.95); }
+}
+
+/* Адаптив для мобильных */
+@media (max-width: 768px) {
+  .home-screen {
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+    min-height: auto;
+    padding: 0 12px;
+  }
+  .mode-tile {
+    min-width: auto; /* На мобильных плитки занимают всю ширину */
+    min-height: 200px;
+    padding: 24px;
+    gap: 16px;
+  }
+    .tile-icon {
+    width: 64px;      /* Было font-size: 56px */
+    height: 64px;     /* Было font-size: 56px */
+    margin-bottom: 8px;
+  }
+  .tile-main { font-size: 24px; }
+  .tile-sub { font-size: 15px; }
+}
+
+/* ===== БУРГЕР И МЕНЮ (замените старые стили) ===== */
+.burger-btn {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  width: 42px;
+  height: 42px;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow);
+  color: var(--text);
+}
+.burger-btn:hover {
+  border-color: var(--primary);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.main-menu {
+  position: absolute;
+  top: calc(50% + 32px); /* Отступ от бургера */
+  left: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 1000;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  min-width: 210px;
+  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+[data-theme="dark"] .main-menu {
+  background: rgba(22, 33, 62, 0.95);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+.main-menu.hidden {
+  display: none !important;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+}
+
+.menu-item {
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text);
+  transition: all 0.2s ease;
+}
+.menu-item:hover {
+  background: var(--primary);
+  color: white;
+}
+.menu-item:active {
+  transform: scale(0.98);
+}
+
+/* Адаптив для мобильных */
+@media (max-width: 500px) {
+  .burger-btn { left: 12px; width: 38px; height: 38px; font-size: 18px; }
+  .main-menu { left: 12px; top: calc(50% + 28px); min-width: 190px; }
+}
+
+/* ===== ФИКС ПОЗИЦИИ БУРГЕРА И МЕНЮ ===== */
+.burger-btn {
+  position: fixed !important;
+  top: 14px !important;
+  left: 14px !important;
+  transform: none !important; /* Убираем вертикальное центрирование */
+  z-index: 1002 !important;
+}
+
+.main-menu {
+  position: fixed !important;
+  top: 64px !important; /* 14px (кнопка) + 42px (высота) + 8px (отступ) */
+  left: 14px !important;
+  z-index: 1001 !important;
+}
+
+@media (max-width: 500px) {
+  .burger-btn {
+    top: 12px !important;
+    left: 12px !important;
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+  }
+  .main-menu {
+    top: 58px !important; /* 12px + 38px + 8px */
+    left: 12px !important;
+    min-width: 190px;
+  }
+}
+
+/* ===== КНОПКА УСТАНОВКИ: НИЖНИЙ ПРАВЫЙ УГОЛ ===== */
+.install-btn {
+  bottom: 16px !important;
+  right: 16px !important;
+  left: auto !important; /* Убираем привязку к левому краю */
+}
+@media (max-width: 500px) {
+  .install-btn {
+    bottom: 12px !important;
+    right: 12px !important;
+  }
+}
+
+/* ===== ПЛАВНЫЙ ПЕРЕХОД МЕЖДУ ЭКРАНАМИ ===== */
+@keyframes fadeOutScreen {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-12px); }
+}
+@keyframes fadeInScreen {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.screen-out { animation: fadeOutScreen 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.screen-in  { animation: fadeInScreen  0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+/* ===== ЭМОЦИОНАЛЬНАЯ ДУЭЛЬ — СТИЛИ ===== */
+
+/* Плитка режима */
+#tile-emotion-duel .tile-icon svg {
+  filter: drop-shadow(0 4px 8px rgba(247, 37, 133, 0.3));
+}
+#tile-emotion-duel:hover .tile-icon svg path {
+  stroke: var(--warning);
+}
+#tile-emotion-duel:hover .tile-icon svg circle {
+  stroke: var(--warning);
+}
+
+/* Модальное окно дуэли */
+#emotion-duel-modal .duel-content {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1629 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+[data-theme="light"] #emotion-duel-modal .duel-content {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+}
+
+/* Видео в дуэли */
+#emotion-duel-video {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+  z-index: 1;
+}
+#emotion-duel-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  filter: drop-shadow(0 0 8px var(--primary));
+  mix-blend-mode: screen;
+}
+
+/* UI слой */
+#emotion-duel-ui {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; /* Чтобы клики проходили сквозь, кроме кнопок */
+}
+#emotion-duel-ui > * {
+  pointer-events: auto; /* Включаем клики для дочерних элементов */
+}
+
+/* Целевая эмоция */
+.duel-target {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  animation: floatTarget 3s ease-in-out infinite;
+}
+@keyframes floatTarget {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.duel-emotion-img {
+  width: 160px;
+  height: 160px;
+  border-radius: 20px;
+  object-fit: cover;
+  border: 4px solid var(--primary);
+  box-shadow: 0 8px 32px rgba(67, 97, 238, 0.5);
+  background: var(--bg-card);
+}
+.duel-emotion-name {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  background: rgba(255,255,255,0.9);
+  padding: 8px 20px;
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+}
+[data-theme="dark"] .duel-emotion-name {
+  background: rgba(22, 33, 62, 0.9);
+}
+
+/* Кнопка начала */
+.duel-start-btn {
+  padding: 16px 48px;
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--success), #27ae60);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(46, 204, 113, 0.5);
+  transition: all 0.2s ease;
+  animation: pulseStart 2s infinite;
+}
+.duel-start-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 32px rgba(46, 204, 113, 0.7);
+}
+.duel-start-btn:active {
+  transform: scale(0.98);
+}
+.duel-start-btn.hidden {
+  display: none;
+}
+@keyframes pulseStart {
+  0%, 100% { box-shadow: 0 8px 24px rgba(46, 204, 113, 0.5); }
+  50% { box-shadow: 0 12px 36px rgba(46, 204, 113, 0.8); }
+}
+
+/* Табло счёта */
+.duel-scoreboard {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 12px 24px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  border: 2px solid var(--border);
+  z-index: 20;
+}
+[data-theme="light"] .duel-scoreboard {
+  background: rgba(255, 255, 255, 0.95);
+}
+.duel-player-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 100px;
+}
+.duel-player-score.p1 { text-align: right; }
+.duel-player-score.p2 { text-align: left; }
+.player-name {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.score-value {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+.score-value.leading {
+  color: var(--warning);
+  text-shadow: 0 0 12px rgba(247, 37, 133, 0.6);
+}
+.accuracy-bar {
+  width: 0%;
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  transition: width 0.3s ease, background 0.3s ease;
+  overflow: hidden;
+}
+
+.vs-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+}
+.target-to {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--warning);
+}
+
+/* Статус игры */
+.duel-status {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 24px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.duel-status.visible { opacity: 1; }
+.duel-status.warning {
+  background: rgba(231, 76, 60, 0.9);
+  animation: shake 0.5s ease-in-out;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(-50%) rotate(0); }
+  25% { transform: translateX(-50%) rotate(-2deg); }
+  75% { transform: translateX(-50%) rotate(2deg); }
+}
+
+/* Экран результатов */
+#duel-result-screen {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(26, 26, 46, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  z-index: 50;
+  animation: fadeIn 0.4s ease;
+}
+#duel-result-screen.hidden { display: none !important; }
+.trophy-animation {
+  font-size: 80px;
+  animation: trophyBounce 1s ease-in-out infinite alternate;
+}
+@keyframes trophyBounce {
+  from { transform: scale(1) rotate(-5deg); }
+  to { transform: scale(1.1) rotate(5deg); }
+}
+.duel-winner {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--warning);
+  text-shadow: 0 0 20px rgba(247, 37, 133, 0.6);
+  margin: 0;
+}
+.duel-final-score {
+  font-size: 48px;
+  font-weight: 900;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: 8px;
+}
+.duel-result-buttons {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+}
+.duel-btn-primary, .duel-btn-secondary {
+  padding: 14px 32px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.duel-btn-primary {
+  background: linear-gradient(135deg, var(--success), #27ae60);
+  color: white;
+  box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+}
+.duel-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(46, 204, 113, 0.6);
+}
+.duel-btn-secondary {
+  background: rgba(255,255,255,0.15);
+  color: var(--text);
+  border: 2px solid var(--border);
+}
+.duel-btn-secondary:hover {
+  background: var(--bg-card);
+  border-color: var(--primary);
+}
+
+/* Индикатор "правильная эмоция" для каждого игрока */
+.player-correct-indicator {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid transparent;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  opacity: 0;
+}
+.player-correct-indicator.p1 {
+  top: 20%; left: 15%;
+  border-color: #4361ee;
+  box-shadow: 0 0 20px rgba(67, 97, 238, 0.6);
+}
+.player-correct-indicator.p2 {
+  top: 20%; right: 15%;
+  border-color: #f72585;
+  box-shadow: 0 0 20px rgba(247, 37, 133, 0.6);
+}
+.player-correct-indicator.active {
+  opacity: 1;
+  animation: pulseRing 1s ease-in-out infinite;
+}
+@keyframes pulseRing {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+  .duel-emotion-img { width: 120px; height: 120px; }
+  .duel-emotion-name { font-size: 18px; padding: 6px 16px; }
+  .duel-start-btn { padding: 12px 36px; font-size: 18px; }
+  .duel-scoreboard {
+    bottom: 12px;
+    padding: 8px 16px;
+    gap: 12px;
+  }
+  .score-value { font-size: 24px; }
+  .player-name { font-size: 12px; }
+  .accuracy-bar { width: 60px; }
+  .duel-final-score { font-size: 36px; }
+  .trophy-animation { font-size: 60px; }
+  .duel-winner { font-size: 24px; }
+  .duel-btn-primary, .duel-btn-secondary {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 500px) {
+  .duel-emotion-img { width: 100px; height: 100px; }
+  .duel-emotion-name { font-size: 16px; }
+  .duel-start-btn { padding: 10px 28px; font-size: 16px; }
+  .duel-scoreboard {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .duel-vs {
+    order: -1;
+    width: 100%;
+    padding: 0;
+    border: none;
+    margin-bottom: 4px;
+  }
+  .player-correct-indicator {
+    width: 80px; height: 80px;
+    top: 15%;
+  }
+  .player-correct-indicator.p1 { left: 10%; }
+  .player-correct-indicator.p2 { right: 10%; }
+}
+
+/* Тёмная тема — корректировки */
+[data-theme="dark"] .duel-scoreboard {
+  border-color: rgba(255,255,255,0.2);
+}
+[data-theme="dark"] .duel-status {
+  background: rgba(10, 15, 30, 0.85);
+}
+
+#emotion-duel-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 30000;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex; /* Changed back to flex to be overridden by opacity/visibility */
+  align-items: center;
+  justify-content: center;
+}
+#emotion-duel-modal[hidden] {
+  display: none !important;
+}
+
+#tile-emotion-duel .tile-icon svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 8px rgba(247, 37, 133, 0.3));
+}
+
+#tile-emotion-duel:hover .tile-icon svg path,
+#tile-emotion-duel:hover .tile-icon svg circle {
+  stroke: var(--warning);
+}
+
+/* Для тёмной темы — чуть ярче акцент */
+[data-theme="dark"] #tile-emotion-duel .tile-icon svg circle {
+  fill: var(--warning);
+}
+
+/* ===== ПОДСВЕТКА ЛИНИЙ ИКОНОК ПРИ НАВЕДЕНИИ ===== */
+.mode-tile .tile-icon svg circle,
+.mode-tile .tile-icon svg path {
+  transition: stroke 0.3s ease, filter 0.3s ease;
+}
+
+/* Подсветка для иконки "Лицо" (Тренировка) */
+#tile-training:hover .tile-icon svg circle,
+#tile-training:hover .tile-icon svg path {
+  stroke: var(--primary-hover);
+  filter: drop-shadow(0 0 6px var(--primary));
+}
+
+/* Подсветка для иконки "Два человека" (Дуэт) */
+#tile-duet:hover .tile-icon svg circle,
+#tile-duet:hover .tile-icon svg path {
+  stroke: var(--primary-hover);
+  filter: drop-shadow(0 0 6px var(--primary));
+}
+
+/* Тёмная тема — более яркое свечение */
+[data-theme="dark"] #tile-training:hover .tile-icon svg circle,
+[data-theme="dark"] #tile-training:hover .tile-icon svg path,
+[data-theme="dark"] #tile-duet:hover .tile-icon svg circle,
+[data-theme="dark"] #tile-duet:hover .tile-icon svg path {
+  filter: drop-shadow(0 0 8px var(--primary-hover));
+}
+
+/* ===== ПОДСВЕТКА ИКОНКИ "ДУЭЛЬ" (МЕЧИ) ===== */
+#tile-emotion-duel .tile-icon svg,
+#tile-emotion-duel .tile-icon svg path,
+#tile-emotion-duel .tile-icon svg rect,
+#tile-emotion-duel .tile-icon svg circle {
+  transition: filter 0.3s ease, stroke 0.3s ease;
+}
+
+/* Свечение при наведении на плитку */
+#tile-emotion-duel:hover .tile-icon svg {
+  filter: drop-shadow(0 0 8px var(--warning));
+}
+
+/* Усиление обводки для элементов с stroke */
+#tile-emotion-duel:hover .tile-icon svg rect,
+#tile-emotion-duel:hover .tile-icon svg path[stroke] {
+  stroke: var(--warning-hover, #ff8fb3);
+}
+
+/* Тёмная тема — более яркое свечение */
+[data-theme="dark"] #tile-emotion-duel:hover .tile-icon svg {
+  filter: drop-shadow(0 0 12px var(--warning)) drop-shadow(0 0 4px rgba(247, 37, 133, 0.5));
+}
+
+
+@keyframes pulseAccent {
+  0%, 100% { opacity: 0.9; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* ===== ЗАКРЕПЛЁННЫЙ БАННЕР ЦЕЛЕВОЙ ЭМОЦИИ ===== */
+.duel-emotion-banner {
+  position: absolute;
+  top: 94px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 28px;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  border-radius: 14px;
+  font-size: 18px;
+  font-weight: 700;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 15;
+  text-align: center;
+  max-width: 90%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: 2px solid var(--warning);
+  box-shadow: 0 4px 20px rgba(247, 37, 133, 0.4);
+  animation: bannerPulse 2s ease-in-out infinite;
+}
+
+@keyframes bannerPulse {
+  0%, 100% { box-shadow: 0 4px 20px rgba(247, 37, 133, 0.4); }
+  50% { box-shadow: 0 6px 28px rgba(247, 37, 133, 0.7); }
+}
+
+[data-theme="light"] .duel-emotion-banner {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--text);
+  border-color: var(--primary);
+  box-shadow: 0 4px 20px rgba(67, 97, 238, 0.3);
+}
+
+[data-theme="light"] .duel-emotion-banner {
+  animation-name: bannerPulseLight;
+}
+
+@keyframes bannerPulseLight {
+  0%, 100% { box-shadow: 0 4px 20px rgba(67, 97, 238, 0.3); }
+  50% { box-shadow: 0 6px 28px rgba(67, 97, 238, 0.5); }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .duel-emotion-banner {
+    top: 16px;
+    padding: 10px 20px;
+    font-size: 16px;
+    max-width: 95%;
+  }
+}
+
+@media (max-width: 500px) {
+  .duel-emotion-banner {
+    top: 12px;
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
+
+/* ===== 2D AVATAR STYLES ===== */
+.avatar-overlay {
+  position: absolute;
+  bottom: 12px;
+  right: 105px;
+  z-index: 15;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease;
+  animation: avatar-pop-in 0.5s ease forwards;
+}
+
+/* Цвет головы для светлой темы */
+.avatar-head {
+  fill: #e0f2fe; /* Светло-голубой */
+  transition: fill 0.3s ease, stroke 0.3s ease;
+}
+
+/* Цвет головы для тёмной темы */
+[data-theme="dark"] .avatar-head {
+  fill: #16213e; /* Тёмный (совпадает с bg-card) */
+  stroke: var(--primary-hover); /* Чуть ярче обводка для контраста */
+}
+
+/* Адаптация тени для тёмной темы */
+[data-theme="dark"] .avatar-overlay {
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+}
+
+/* Плавные переходы для остальных элементов */
+.avatar-eyes, .avatar-mouth, .avatar-brows line, .avatar-cheeks circle {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Анимации */
+@keyframes avatar-pop-in {
+  from { opacity: 0; transform: scale(0.8) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes avatar-breathe {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+#mimic-avatar {
+  animation: avatar-breathe 3s ease-in-out infinite;
+}
+
+@keyframes avatar-blink {
+  0%, 96%, 98%, 100% { transform: scaleY(1); }
+  97% { transform: scaleY(0.1); }
+}
+.avatar-eyes {
+  animation: avatar-blink 4.5s infinite;
+  transform-origin: 50px 46px;
+}
+
+/* ===== 2D AVATAR STYLES ===== */
+.avatar-brows line {
+  transition:
+    x1 0.22s ease,
+    y1 0.22s ease,
+    x2 0.22s ease,
+    y2 0.22s ease,
+    stroke 0.2s ease;
+}
+
+/* Опционально: чуть более выразительные брови */
+.avatar-brows line {
+  stroke-width: 3.5; /* чуть толще для лучшей видимости */
+  stroke-linecap: round;
+}
+

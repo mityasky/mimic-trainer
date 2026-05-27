@@ -1,0 +1,45 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f093fb"/>
+      <stop offset="100%" stop-color="#f5576c"/>
+    </linearGradient>
+    <style>
+      @keyframes blink {
+        0%, 45%, 55%, 100% { transform: scaleY(1); }
+        50% { transform: scaleY(0.1); }
+      }
+      @keyframes sadMouth {
+        0%, 40%, 100% { 
+          d: path("M 30 56 L 42 62 L 58 56"); 
+          fill: none; 
+          stroke: #fff; 
+          stroke-width: 6;
+          stroke-linecap: round;
+        }
+        45%, 95% { 
+          d: path("M 30 62 L 42 56 L 58 62"); 
+          fill: none; 
+          stroke: #fff; 
+          stroke-width: 6;
+          stroke-linecap: round;
+        }
+      }
+      .eye { 
+        transform-origin: 36px 38px;
+        animation: blink 4s infinite;
+      }
+      .eye-right { 
+        transform-origin: 64px 38px;
+        animation: blink 4s infinite;
+      }
+      .mouth {
+        animation: sadMouth 4s infinite;
+      }
+    </style>
+  </defs>
+  <rect x="8" y="8" width="84" height="84" rx="12" fill="url(#g6)"/>
+  <rect class="eye" x="30" y="32" width="12" height="12" fill="#fff"/>
+  <rect class="eye eye-right" x="58" y="32" width="12" height="12" fill="#fff"/>
+  <path class="mouth" d="M 30 56 L 42 62 L 58 56" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+</svg>
