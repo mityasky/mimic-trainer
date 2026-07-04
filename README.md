@@ -1,4 +1,4 @@
-"MIMIK" is a browser-based AI-based trainer for developing emotion recognition and reproduction skills, designed specifically for children with autism and their mentors. The project is currently implemented as a fully functional web application (PWA).
+"MIMIC" is a browser-based AI-based trainer for developing emotion recognition and reproduction skills, designed specifically for children with autism and their mentors. The project is currently implemented as a fully functional web application (PWA).
 
 1. Technical implementation: The application runs entirely locally. It uses lightweight neural networks (face-api.js, BodyPix, TensorFlow.js) to detect faces and classify six basic emotions in real time. The video stream never leaves the device.
 2. Game mechanics: Scoring system, high-score recording, audio and visual feedback, and an adaptive 2D avatar that mirrors the child's emotions for additional engagement.
