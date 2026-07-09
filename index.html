@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="theme-color" content="#4361ee">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="google-site-verification" content="IghYSaXB0N5YBv-GAIvejIsRMPBGiZ99C2VteG7VNAA" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="pageTitle">МИМИК</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="description" data-i18n="pageDescription" content="Бесплатный онлайн-тренажёр для обучения распознаванию эмоций. Помогает детям с аутизмом (РАС) развивать эмоциональный интеллект через игру с камерой, A free online emotion recognition training tool. Helps children with autism (ASD) develop emotional intelligence through camera play.">
+  <meta name="keywords" content="аутизм, РАС, эмоции, тренажёр, распознавание лиц, дети, развитие, мимика, обучение, Autism, ASD, emotions, simulator, face recognition, children, development, facial expressions, learning">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://mimic-trainer.mityasky.workers.dev/">
+  
+    <!-- Open Graph (для красивых превью в соцсетях) -->
+  <meta property="og:title" content="МИМИК — Тренажёр эмоций">
+  <meta property="og:description" content="Учимся распознавать эмоции через игру. Бесплатно, без регистрации, в браузере.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mimic-trainer.mityasky.workers.dev/">
+  <meta property="og:image" content="https://mimic-trainer.mityasky.workers.dev/og-image.jpg">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  
+  <!-- Библиотеки -->
+<script src="lib/tf.min.js"></script>
+<script src="lib/body-pix.min.js"></script>
+<script src="lib/face-api.js"></script>
+<script src="/lib/jspdf.umd.min.js"></script>
+<script src="/lib/html2canvas.min.js"></script>
+  
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "МИМИК Тренажёр эмоций",
+  "description": "Онлайн-тренажёр для обучения распознаванию эмоций. Помогает детям с РАС развивать эмоциональный интеллект.",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Any",
+  "url": "https://mimic-trainer.mityasky.workers.dev/",
+  "author": {
+    "@type": "Person",
+    "name": "Дмитрий ЛАЗУРЕНКО"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "RUB"
+  }
+}
+</script>
+  
+</head>
+<body>
+<!-- ===== БОКОВЫЕ ПАНЕЛИ (обе слева) ===== -->
+<div class="side-panels-container">
+  <!-- Левая панель - обе кнопки -->
+  <div class="side-panel side-panel-left">
+    
+    
+    <!-- Панель Помощь -->
+    <div class="info-panel" id="help-panel">
+      <div class="info-panel-header">
+        <h3 data-i18n="helpTitle">ℹ️ О РАС и тренажёре</h3>
+        <button class="info-panel-close" onclick="window.toggleInfoPanel('help')">&times;</button>
+      </div>
+      <div class="info-panel-content">
+<button type="button" data-action="show-onboarding" 
+        data-i18n="btnShowOnboarding"
+        style="width:100%; padding:10px; background:var(--primary); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:600;">
+  Показать инструкцию заново
+</button>
+        <!-- ... содержимое панели помощи (без изменений) ... -->
+        <h4 data-i18n="helpWhatIsAutism">Что такое РАС?</h4>
+        <p data-i18n="helpAutismDesc">Расстройство аутистического спектра (РАС) — это особенность развития нервной системы, которая влияет на то, как человек воспринимает мир и взаимодействует с другими. Это не болезнь, а иной способ обработки информации.</p>
+        <h4 data-i18n="helpEmotionDifficulty">Сложности с эмоциями</h4>
+        <p data-i18n="helpEmotionDesc">Дети с РАС часто испытывают трудности с:</p>
+        <ul>
+          <li data-i18n="helpEmotionItem1">Распознаванием эмоций на лицах других людей</li>
+          <li data-i18n="helpEmotionItem2">Пониманием, что чувствует собеседник</li>
+          <li data-i18n="helpEmotionItem3">Выражением собственных эмоций через мимику</li>
+          <li data-i18n="helpEmotionItem4">Связью между внутренним состоянием и внешним выражением</li>
+        </ul>
+        <h4 data-i18n="helpHowTrainerHelps">Как помогает тренажёр?</h4>
+        <p data-i18n="helpTrainerDesc">Наш тренажёр «МИМИК» создан для того, чтобы помочь освоить эти навыки:</p>
+        <ul>
+          <li data-i18n="helpTrainerItem1">Показываем эмоцию — учимся её узнавать</li>
+          <li data-i18n="helpTrainerItem2">Камера распознаёт вашу мимику в реальном времени</li>
+          <li data-i18n="helpTrainerItem3">Система баллов мотивирует и показывает прогресс</li>
+          <li data-i18n="helpTrainerItem4">Повторение помогает закрепить навык</li>
+        </ul>
+        <h4 data-i18n="helpHowToUse">Как пользоваться?</h4>
+        <ol>
+          <li data-i18n="helpUseItem1">Нажмите «Начать»</li>
+          <li data-i18n="helpUseItem2">Посмотрите на эмоцию вверху экрана</li>
+          <li data-i18n="helpUseItem3">Постарайтесь показать такую же эмоцию</li>
+          <li data-i18n="helpUseItem4">При успехе получите баллы! ⭐</li>
+          <li data-i18n="helpUseItem5">Переключайте эмоции стрелками ⬅️ ➡️</li>
+		  <li data-i18n="helpUseItem6">Режим дуэт позволит сделать занятия более интерактивными с наставником</li>
+        </ol>
+        <div class="info-note" data-i18n="helpNote">💡 <strong>Совет:</strong> Не торопитесь. Каждое повторение — маленький шаг к большому успеху!</div>
+      </div>
+	  <div style="margin-top: 20px; padding-top: 16px; border-top: 1px dashed var(--border);">
+</div>
+    </div>
+    
+    <!-- Панель Приватность -->
+    <div class="info-panel" id="privacy-panel">
+      <div class="info-panel-header">
+        <h3 data-i18n="privacyTitle">🔒 Политика конфиденциальности</h3>
+        <button class="info-panel-close" onclick="window.toggleInfoPanel('privacy')">&times;</button>
+      </div>
+      <div class="info-panel-content">
+        <!-- ... содержимое панели приватности (без изменений) ... -->
+        <h4 data-i18n="privacyDataCollection">Сбор данных</h4>
+        <p data-i18n="privacyDataDesc">Тренажёр «МИМИК» работает полностью в вашем браузере. Мы <strong>не собираем</strong>, <strong>не храним</strong> и <strong>не передаём</strong> никакие персональные данные на серверы.</p>
+        <h4 data-i18n="privacyCamera">Использование камеры</h4>
+        <p data-i18n="privacyCameraDesc">Камера используется только для распознавания эмоций в реальном времени. Видеопоток обрабатывается локально на вашем устройстве и никуда не отправляется.</p>
+        <h4 data-i18n="privacyStorage">Хранение данных</h4>
+        <p data-i18n="privacyStorageDesc">На устройстве сохраняются только:</p>
+        <ul>
+          <li data-i18n="privacyStorageItem1">Выбранный язык интерфейса</li>
+          <li data-i18n="privacyStorageItem2">Выбранная тема оформления</li>
+          <li data-i18n="privacyStorageItem3">Текущий счёт баллов (до перезагрузки страницы)</li>
+        </ul>
+        <h4 data-i18n="privacyThirdParty">Сторонние сервисы</h4>
+        <p data-i18n="privacyThirdPartyDesc">Приложение использует следующие библиотеки с CDN:</p>
+        <ul>
+          <li>TensorFlow.js</li>
+          <li>BodyPix</li>
+          <li>face-api</li>
+        </ul>
+        <p data-i18n="privacyThirdPartyNote">Эти библиотеки загружаются при первом запуске. CDN-серверы могут фиксировать факт загрузки файлов, но не получают доступа к вашим данным.</p>
+        <h4 data-i18n="privacyChildren">Данные детей</h4>
+        <p data-i18n="privacyChildrenDesc">Тренажёр предназначен для использования под наблюдением взрослых. Мы не собираем данные о детях. Рекомендуется использовать приложение в безопасной среде.</p>
+        <h4 data-i18n="privacyChanges">Изменения политики</h4>
+        <p data-i18n="privacyChangesDesc">Мы оставляем за собой право обновлять данную политику. Актуальная версия всегда доступна в приложении.</p>
+        <div class="info-note">
+          <p data-i18n="privacyContact">📧 <strong>Контакт:</strong> По вопросам конфиденциальности обращайтесь к разработчику.</p>
+        </div>
+        <div class="privacy-version" data-i18n="privacyVersion">Версия политики: 1.0 | Обновлено: Апрель 2026</div>
+      </div>
+    </div>
+
+
+  <!-- Панель новостей -->
+  <div id="news-panel" class="info-panel">
+    <div class="info-panel-header">
+      <h3 data-i18n="newsTitle">📰 Новости и обновления</h3>
+      <button class="info-panel-close" onclick="toggleInfoPanel('news')">&times;</button>
+    </div>
+    <div class="info-panel-content">
+      <h4 data-i18n="newsLatest">Последние обновления</h4>
+      <ul>
+        <li data-i18n="newsItem1">Повышена стабильность загрузки нейросетевых моделей для распознавания лиц и эмоций</li>
+        <li data-i18n="newsItem2">Добавлен раздел научной литературы и сделаны небольшие улучшения и обновления интерфейса</li>
+		<li data-i18n="newsItem3"></li>
+		<li data-i18n="newsItem4"></li>
+		<li data-i18n="newsItem5"></li>
+		<li data-i18n="newsItem6"></li>
+		<li data-i18n="newsItem7"></li>
+	    <li data-i18n="newsItem8"></li>
+      </ul>
+
+      <h4 data-i18n="newsPlanned">В разработке</h4>
+      <ul>
+        <li data-i18n="newsPlanned1">Новый игровой режим «Эмоциональные дуэли» 👥</li>
+        <li data-i18n="newsPlanned2">Новые классы состояний: скука 😐, сонливость 😴</li>
+		  <!--<li data-i18n="newsPlanned3">Разработка десктопного приложения для оффлайн-режима 💻</li> -->
+      </ul>
+	  
+	  <!-- Новый подраздел: Фичи -->
+	  <h4 data-i18n="featuresTitle">🚀 Фичи</h4>
+<ul>
+  <li data-i18n="featureItem1">Интеграция с Яндекс/Google/Apple профилями</li>
+ <!--  <li data-i18n="featureItem2"></li>-->
+  <li data-i18n="featureItem3">Создание цифрового эмоционального портрета</li>
+</ul>
+
+      <div class="info-note" data-i18n="newsNote">Следите за обновлениями — новые функции появляются регулярно!</div>
+    </div>
+  </div>
+  
+
+
+<!-- Панель научных публикаций -->
+<div id="science-panel" class="info-panel">
+  <div class="info-panel-header">
+    <h3 data-i18n="scienceTitle">🔬 Научные публикации</h3>
+    <button class="info-panel-close" onclick="toggleInfoPanel('science')">&times;</button>
+  </div>
+  <div class="info-panel-content">
+    <p data-i18n="scienceIntro">Исследования подтверждают эффективность компьютерных и технологических вмешательств для развития навыков распознавания эмоций у детей с РАС. Вот некоторые из рецензируемых научных работ:</p>
+    
+<div class="science-article">
+  <h4 data-i18n="scienceArticle1Title">1. Систематический обзор и мета-анализ IT-интервенций (2025)</h4>
+  <p class="article-authors">Liu, Y., Li, S., Huang, Y., & Li, D. (2025)</p>
+  <p class="article-journal"><em>Journal of Intelligence</em>, 13(8), 98</p>
+  <p class="article-desc" data-i18n="scienceArticle1Desc">Мета-анализ показал, что технологические интервенции имеют отличный эффект (Hedges' g = 0.897) на социально-эмоциональную компетентность лиц с РАС.</p>
+  <a href="https://www.mdpi.com/2079-3200/13/8/98" target="_blank" class="article-link" data-i18n="readArticle">Читать статью →</a>
+</div>
+
+<div class="science-article">
+  <h4 data-i18n="scienceArticle6Title">2. Пошаговая цифровая игра для обучения эмоциям (РКИ, 2026)</h4>
+  <p class="article-authors">Lu, H., Li, S., Peng, S., Zhang, Y., Li, N., & Hu, Z. (2026)</p>
+  <p class="article-journal"><em>Journal of Autism and Developmental Disorders</em></p>
+  <p class="article-desc" data-i18n="scienceArticle6Desc">Рандомизированное контролируемое исследование (36 детей, 3–10 лет) показало, что цифровая игра с иерархической структурой (на базе Теории психического) значительно улучшает точность распознавания эмоций, положительно влияет на базовые симптомы аутизма и снижает стресс родителей.</p>
+  <a href="https://link.springer.com/article/10.1007/s10803-026-07321-4" target="_blank" class="article-link" data-i18n="readArticle">Читать статью →</a>
+</div>
+
+<!-- Статья 3: Добавляем после существующих -->
+<div class="science-article">
+  <h4 data-i18n="scienceArticle3Title">3. Обучение распознаванию эмоций у детей с аутизмом (2012)</h4>
+  <p class="article-authors">Golan, O., Baron-Cohen, S., & Golan, Y. (2012)</p>
+  <p class="article-journal"><em>Journal of Autism and Developmental Disorders</em>, 42, 1101-1112</p>
+  <p class="article-desc" data-i18n="scienceArticle3Desc">Рандомизированное контролируемое исследование показало, что компьютерная программа обучения распознаванию эмоций значительно улучшает социальные навыки и понимание эмоций у детей с РАС.</p>
+  <a href="https://d1wqtxts1xzle7.cloudfront.net/39431847/Teaching_emotion_recognition_skills_to_y20151026-10613-1daz2fb-libre.pdf?1445893825=&response-content-disposition=inline%3B+filename%3DTeaching_emotion_recognition_skills_to_y.pdf&Expires=1778334202&Signature=hAktlkFMi0co4mFF1CjxrI4~uN57bqcO8uSqY~HXytcw8czDZ~4AG3dYgTHL2ooe01R5gEB1K-mrkcwUaQHxB3TwoGNz0HDNCDdmHesa~zTRYXtJpPTBvaVszPQOsKYVtVTnK4KGUlKxi4E8rtqUIocpKEqxu6y8iDYARkhNO8pI0IKQIIYfFJ8JpXRwo795y5n9xDyV0Nvdf5vrI23-1OKhBzAJ6yUXF1x2~x2g6S8F2b7UMNH2MFB5QKp7TlzgJVAuk~bhOBEwN3rjCgVy9rOIFtAsGaU-OOBB9sUmPgRvCFEC4rrkkMQd0bQiXFDFCWbv3gpZ-dZOzzP~thKnEg__&Key-Pair-Id=APKAJLOHF5GGSLRBV4ZA" target="_blank" class="article-link" data-i18n="readArticle">Читать статью →</a>
+</div>
+
+<!-- Статья 4 -->
+<div class="science-article">
+  <h4 data-i18n="scienceArticle4Title">4. Планшетное приложение для тренировки эмоций (2021)</h4>
+  <p class="article-authors">Fletcher-Watson, S., et al. (2021)</p>
+  <p class="article-journal"><em>Autism Research</em>, 14(10), 2156-2168</p>
+  <p class="article-desc" data-i18n="scienceArticle4Desc">Исследование продемонстрировало эффективность геймифицированного планшетного приложения для улучшения распознавания базовых эмоций и снижения тревожности у детей с аутизмом.</p>
+  <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8497190/pdf/521_2021_Article_6592.pdf" target="_blank" class="article-link" data-i18n="readArticle">Читать статью →</a>
+</div>
+
+<!-- Статья 5 -->
+<div class="science-article">
+  <h4 data-i18n="scienceArticle5Title">5. Автоматическое распознавание прогресса терапии через планшетные игры (2017)</h4>
+  <p class="article-authors">Anuszkiewicz A., Kacprzak A., et al. (2017)</p>
+  <p class="article-journal"><em>Scientific Reports</em> (Nature)</p>
+  <p class="article-desc" data-i18n="scienceArticle5Desc">Исследование показало, что поведенческие данные, собранные через специально разработанные планшетные игры (сенсоры касания, акселерометр, гироскоп), позволяют с точностью >80% распознавать прогресс терапии у детей с РАС. Выявлены ключевые параметры-предикторы успеха.</p>
+  <a href="https://pubmed.ncbi.nlm.nih.gov/29066747/" target="_blank" class="article-link" data-i18n="readArticle">Читать статью →</a>
+</div>
+	
+    <div class="info-note" data-i18n="scienceNote">
+      Все статьи опубликованы в рецензируемых научных журналах и подтверждают эффективность технологических подходов к обучению распознаванию эмоций.
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+
+<header class="app-header">
+<button id="burger-btn" class="burger-btn" aria-label="Меню">
+  ☰
+</button>
+<div id="main-menu" class="main-menu hidden">
+  <button class="menu-item" data-panel="help" data-i18n="menuHelp">Помощь</button>
+  <button class="menu-item" data-panel="privacy" data-i18n="menuPrivacy">Приватность</button>
+  <button class="menu-item" data-panel="news" data-i18n="menuNews">Новости</button>
+  <button class="menu-item" data-panel="science" data-i18n="menuScience">Наука</button>
+  <button class="menu-item" id="menu-feedback" data-i18n="menuContact">Контакт</button>
+  <button class="menu-item" id="menu-reviews" data-i18n="menuReviews">Отзывы</button>
+  <button class="menu-item" id="menu-donate" data-i18n="menuSupport">Поддержать</button>
+</div>
+  <div class="app-header-center">
+    <span class="app-icon"><img src="logo.svg" alt="Mimic Logo" style="width:120%; height:auto;"></span>
+    <h1 data-i18n="appTitle">МИМИК Тренажёр эмоций</h1>
+  </div>
+  
+  <div class="header-controls">
+    <button id="lang-toggle" class="lang-btn" title="Switch language">RU</button>
+    <button id="theme-toggle" class="theme-btn" title="Toggle theme">🌙</button>
+  </div>
+</header>
+
+
+<!-- ===== ГЛАВНЫЙ ЭКРАН: ДВЕ ПЛИТКИ ===== -->
+<section id="home-screen" class="home-screen">
+  
+  <!-- ПЛИТКА ТРЕНИРОВКИ -->
+  <button id="tile-training" class="mode-tile">
+    <span class="tile-icon">
+      <!-- Иконка Лицо -->
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="40" stroke-width="6"/>
+        <circle cx="35" cy="40" r="5" fill="var(--primary)" stroke="none"/>
+        <circle cx="65" cy="40" r="5" fill="var(--primary)" stroke="none"/>
+        <path d="M 30 65 Q 50 85 70 65" stroke-width="6" stroke-linecap="round" fill="none"/>
+      </svg>
+    </span>
+    <span class="tile-text">
+      <span class="tile-main" data-i18n="tileTrainingMain">Тренировка</span>
+      <span class="tile-sub" data-i18n="tileTrainingSub">Учимся эмоциям</span>
+    </span>
+  </button>
+
+  <!-- ПЛИТКА ДУЭТ -->
+  <button id="tile-duet" class="mode-tile">
+    <span class="tile-icon">
+      <!-- Иконка Два человека -->
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Человек 1 -->
+        <circle cx="35" cy="40" r="14" stroke-width="6"/>
+        <path d="M 5 95 Q 15 65 35 65 Q 55 65 65 95" stroke-width="6" stroke-linecap="round" fill="none"/>
+        <!-- Человек 2 -->
+        <circle cx="70" cy="35" r="11" stroke-width="6"/>
+        <path d="M 45 95 Q 58 70 70 70 Q 82 70 95 95" stroke-width="6" stroke-linecap="round" fill="none"/>
+      </svg>
+    </span>
+    <span class="tile-text">
+      <span class="tile-main" data-i18n="tileDuetMain">Дуэт</span>
+      <span class="tile-sub" data-i18n="tileDuetSub">Игра с другом</span>
+    </span>
+  </button>
+  
+  <!-- Плитка режима Эмоциональная Дуэль -->
+<button id="tile-emotion-duel" class="mode-tile">
+  <span class="tile-icon">
+    <!-- Два скрещенных широких меча остриями вверх -->
+<!-- Два скрещенных широких меча остриями вверх — увеличенная версия -->
+<svg viewBox="0 0 100 100" fill="none" stroke="var(--primary)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+  
+  <!-- Меч 1 (Остриё влево-вверх) -->
+  <g transform="rotate(-45 50 50)">
+    <!-- Лезвие (более длинное и широкое) -->
+    <path d="M 50 8 C 53 28, 51 46, 47 57 L 43 57 L 43 64 L 57 64 L 57 57 L 53 57 C 49 46, 47 28, 50 8 Z" fill="var(--primary)" stroke="none" />
+    <!-- Гарда (шире) -->
+    <rect x="28" y="62" width="44" height="7" rx="3.5" fill="var(--bg-card)" stroke="var(--primary)" stroke-width="2" />
+    <!-- Рукоять -->
+    <rect x="45" y="70" width="10" height="18" rx="2.5" fill="var(--bg-card)" stroke="var(--primary)" stroke-width="2" />
+    <!-- Навершие (крупнее) -->
+    <circle cx="50" cy="92" r="6" fill="var(--primary)" stroke="none" />
+  </g>
+
+  <!-- Меч 2 (Остриё вправо-вверх) -->
+  <g transform="rotate(45 50 50)">
+    <!-- Лезвие -->
+    <path d="M 50 8 C 53 28, 51 46, 47 57 L 43 57 L 43 64 L 57 64 L 57 57 L 53 57 C 49 46, 47 28, 50 8 Z" fill="var(--primary)" stroke="none" />
+    <!-- Гарда -->
+    <rect x="28" y="62" width="44" height="7" rx="3.5" fill="var(--bg-card)" stroke="var(--primary)" stroke-width="2" />
+    <!-- Рукоять -->
+    <rect x="45" y="70" width="10" height="18" rx="2.5" fill="var(--bg-card)" stroke="var(--primary)" stroke-width="2" />
+    <!-- Навершие -->
+    <circle cx="50" cy="92" r="6" fill="var(--primary)" stroke="none" />
+  </g>
+
+  <!-- Акцент в центре пересечения (опционально) -->
+  <circle cx="50" cy="50" r="4" fill="var(--warning)" stroke="none" opacity="0.9"/>
+</svg>
+  </span>
+  <span class="tile-text">
+    <span class="tile-main" data-i18n="tileDuelMain">Дуэль</span>
+    <span class="tile-sub" data-i18n="tileDuelSub">Соревнование эмоций</span>
+  </span>
+</button>
+
+</section>
+
+  <main>
+  <section id="training-view" class="training-view hidden">
+  <button id="btn-back-home" class="back-to-home-btn" data-i18n="backToHome">← На главную</button>
+  
+<!-- Блок целевой эмоции с кнопками по бокам -->
+<div class="desktop-layout">
+  <!-- Блок целевой эмоции (СЛЕВА) -->
+  <section id="target-section" class="card">
+    <button id="btn-prev" class="nav-btn" onclick="prevEmotion()" aria-label="Предыдущая эмоция">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+    
+    <div id="target-emotion" class="target-display">
+      <img id="emotion-image" src="emotions/happy.jpg" alt="Целевая эмоция">
+      <h2 id="emotion-name">Радость 😊</h2>
+    </div>
+    
+    <button id="btn-next" class="nav-btn" onclick="nextEmotion()" aria-label="Следующая эмоция">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+		<button id="menu-progress" class="progress-btn-training">
+   <span data-i18n="menuProgress">Прогресс</span>
+</button>
+  </section>
+
+  <!-- Блок камеры (СПРАВА) -->
+  <section class="card camera-wrapper">
+    <div class="video-overlay">
+      <video id="camera-feed" autoplay playsinline muted style="display:none;"></video>
+      <canvas id="body-segmentation-canvas"></canvas>
+	  
+	    <canvas id="time-delay-canvas"></canvas>
+  <div id="camera-effects-panel" class="camera-effects-panel">
+   <!-- <button id="btn-time-delay" class="effect-btn" data-i18n-title="effectEchoTitle">
+      <span class="effect-icon">⏱️</span>
+      <span class="effect-label" data-i18n="effectEchoLabel">Эхо</span>
+    </button>-->
+<button id="btn-dynamic-bg" class="effect-btn" data-i18n-title="effectBgTitle">
+  <span class="effect-icon rainbow-icon"></span>
+  <span class="effect-label" data-i18n="effectBgLabel">Цвет</span>
+</button>
+  </div>
+
+      
+      <!-- 2D Avatar -->
+      <div id="avatar-container" class="avatar-overlay" hidden>
+        <svg id="mimic-avatar" viewBox="0 0 100 100" width="80" height="80" aria-label="Emotion Avatar">
+          <!-- Голова -->
+          <circle class="avatar-head" cx="50" cy="50" r="40" stroke="var(--primary)" stroke-width="2"/>
+            
+		  <g class="avatar-brows">
+  <line id="brow-left"
+        x1="30" y1="35"
+        x2="42" y2="35"
+        stroke="var(--text)"
+        stroke-width="3.5"
+        stroke-linecap="round"/>
+
+  <line id="brow-right"
+        x1="58" y1="35"
+        x2="70" y2="35"
+        stroke="var(--text)"
+        stroke-width="3.5"
+        stroke-linecap="round"/>
+</g>
+          
+          <!-- Глаза -->
+          <g class="avatar-eyes">
+            <circle cx="36" cy="46" r="4" fill="var(--text)" class="eye-left" />
+            <circle cx="64" cy="46" r="4" fill="var(--text)" class="eye-right" />
+          </g>
+          
+          <!-- Рот -->
+          <path class="avatar-mouth" d="M 35 65 Q 50 65 65 65" stroke="var(--text)" stroke-width="3" fill="none" stroke-linecap="round" />
+          
+          <!-- Щёчки -->
+          <g class="avatar-cheeks">
+            <circle cx="24" cy="58" r="5" fill="var(--warning)" opacity="0" class="cheek-left" />
+            <circle cx="76" cy="58" r="5" fill="var(--warning)" opacity="0" class="cheek-right" />
+          </g>
+        </svg>
+      </div>
+    </div>
+	
+		  <div id="face-detection-status" class="face-status-badge" aria-live="polite">
+  <span class="status-dot"></span>
+  <span class="status-text" data-i18n="faceNotDetected">Лицо не обнаружено</span>
+</div>
+	
+<div id="hard-progress" style="height:8px;background:rgba(255,255,255,0.12);border-radius:6px;overflow:hidden;margin-top:8px;border:1px solid var(--border);box-shadow:inset 0 1px 2px rgba(0,0,0,0.15);">
+  <div id="hard-progress-fill" style="height:100%;background:linear-gradient(90deg, #ffe600, #ffaa00);width:0%;transition:width 0.2s ease-out;box-shadow:0 0 12px rgba(255, 230, 0, 0.5);border-radius:6px;"></div>
+</div>
+
+<div id="record-notification" class="record-notification" hidden>
+  <span class="record-icon">🏆</span>
+  <span class="record-text" data-i18n="newRecordSuccess">Новый рекорд!</span>
+</div>
+	
+	<!-- ИНДИКАТОР ЗАГРУЗКИ МОДЕЛЕЙ -->
+<div id="loading-indicator" class="loading-overlay">
+  <div class="loading-content">
+    <div class="loading-spinner"></div>
+    <p data-i18n="loadingModels">Загружаем нейросети... Пожалуйста, подождите</p>
+  </div>
+</div>
+
+<!-- ИНДИКАТОР НИЗКОГО ОСВЕЩЕНИЯ -->
+<div id="lowlight-warning" class="warning-overlay">
+  <div class="warning-content">
+    <span class="warning-icon">⚠️</span>
+    <p data-i18n="lowLightWarning">Низкое освещение! Модель может работать неточно</p>
+    <button onclick="dismissLowLightWarning()" data-i18n="dismissWarning">Понятно</button>
+  </div>
+</div>
+  
+  <!-- Бейдж статуса остаётся поверх всего блока камеры -->
+  <span id="camera-status-badge" class="status-badge" data-i18n="cameraActive">● Камера активна</span>
+  
+    <!-- Панель управления камерой -->
+    <div class="camera-controls">
+<div class="cam-buttons">
+  <button id="btn-start-cam" onclick="startCamera()" data-i18n="btnStartCam">🎥 Начать</button>
+  <button id="btn-stop-cam" onclick="stopCamera()" disabled data-i18n="btnStopCam">⏹ Стоп</button>
+  <!-- Кнопка звука -->
+  <button id="btn-sound-toggle" onclick="toggleSound()" data-i18n="btnSoundOn" >🔊</button>
+</div>
+      
+      <div class="score-display">
+        <span class="score-label">⭐</span>
+        <span id="score" class="score-value">0</span>
+		<span id="high-score" class="high-score-value">🏆 0</span>
+		    <section id="extra-controls">
+      <button onclick="resetScore()" data-i18n="btnReset">🔄 Сбросить баллы</button>
+      <!-- <button onclick="toggleCameraSize()" data-i18n="btnCameraSize">📐 Размер камеры</button>-->
+    </section>
+      </div>
+      
+<div class="detected-emotion">
+  <span class="detected-label" data-i18n="detectedLabel">Ваша эмоция:</span>
+  <span id="detected-emotion" class="detected-value">--</span>
+</div>
+    </div>
+	    <!-- Обратная связь -->
+    <div id="feedback" class="feedback"></div>
+  </section>
+
+<!-- ПОЛЗУНОК СЛОЖНОСТИ -->
+<div class="difficulty-panel">
+  <span class="diff-label-top" data-i18n="difficultyHard">Hard</span>
+  <div class="slider-wrapper">
+    <input type="range" id="difficulty-slider" min="0" max="2" step="1" value="1" title="Уровень сложности">
+  </div>
+  <span class="diff-label-bottom" data-i18n="difficultyEasy">Easy</span>
+  <button class="diff-info-btn" id="diff-info-btn" aria-label="Пояснение">ℹ️</button>
+  <div class="difficulty-tooltip" id="diff-tooltip" data-i18n="difficultyTooltip">
+    <strong>Настройка сложности</strong><br>
+    Регулирует строгость распознавания мимики:<br>
+    • <b>Easy (0.2)</b> — прощает лёгкие неточности<br>
+    • <b>Medium (0.5)</b> — стандартный режим<br>
+    • <b>Hard (0.92)</b> — требует чёткого выражения
+  </div>
+</div> 
+
+<!-- Кнопка Дуэт — теперь ОТДЕЛЬНО, прямо под панелью 
+<button id="btn-duel-mode" data-i18n="duelBtn" onclick="openDuelMode()">
+  👥 <span data-i18n="duelBtn">Дуэт</span>
+</button>-->
+
+  </main>
+  
+  </section>
+
+  <footer>
+    <p data-i18n="footerText">🔒 Все данные обрабатываются локально. Ничего не отправляется на сервер. © 2026 prod by <a href="https://sites.google.com/view/dlazurenko" target="_blank" rel="noopener noreferrer" class="author-link">Dmitry LAZURENKO</a></p>
+  </footer>
+  
+    <!-- Кнопка установки PWA -->
+<button id="pwa-install-btn" class="bottom-fixed-btn install-btn" style="display: none;">
+  📲 <span data-i18n="btnInstall">Install App</span>
+</button>
+
+<!-- Баннер обновления -->
+<div id="update-banner" hidden class="update-banner">
+  🔄 <span data-i18n="updateReady">Доступна новая версия!</span>
+  <button id="update-apply-btn" data-i18n="updateBtn">Обновить</button>
+</div>
+
+<div class="modal-overlay" id="progress-modal">
+  <div class="modal-content progress-modal">
+    <button class="modal-close" id="progress-close">×</button>
+    <h2 data-i18n="progressTitle">История прогресса</h2>
+    
+    <div class="progress-summary" id="progress-summary">
+      <div class="summary-card">
+        <div class="summary-value" id="stat-sessions">0</div>
+        <div class="summary-label" data-i18n="statSessions">Сессий</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-value" id="stat-streak">0</div>
+        <div class="summary-label" data-i18n="statBestStreak">Лучшая серия</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-value" id="stat-accuracy">0%</div>
+        <div class="summary-label" data-i18n="statAvgAccuracy">Средняя точность</div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="progress-chart"></canvas>
+    </div>
+
+<div style="display: flex; gap: 10px; flex-wrap: wrap;">
+  <button class="btn-clear-progress" id="clear-progress-btn" data-i18n="clearProgress">Очистить историю</button>
+  <button class="btn-save-progress" id="save-progress-btn" data-i18n="saveProgress">💾 Сохранить историю</button>
+</div>
+</div>
+</div>
+  <script src="app.js"></script>
+
+
+<div id="feedback-modal" class="modal-overlay">
+  <div class="modal-content feedback-modal-simple">
+    <button class="modal-close" aria-label="Закрыть">&times;</button>
+    <h2 data-i18n="feedbackTitle">Напишите мне, если есть вопросы или предложения</h2>
+    <button id="feedback-write-btn" class="modal-submit-btn" data-i18n="btnWrite">💬 Написать</button>
+  </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО ДОНАТА -->
+<div id="donate-modal" class="modal-overlay">
+  <div class="modal-content donate-modal">
+    <button class="modal-close" aria-label="Закрыть">&times;</button>
+    <h2 data-i18n="donateTitle">Поддержать проект</h2>
+    <p class="donate-desc" data-i18n="donateDesc">Ваша поддержка позволит проекту расти и развиваться</p>
+    
+    <div class="donate-methods">
+      <!-- <a href="https://boosty.to/YOUR_LINK" target="_blank" rel="noopener" class="donate-link-btn">🟣 Boosty</a>-->
+      <a href="https://yoomoney.ru/to/4100119518078231" target="_blank" rel="noopener" class="donate-link-btn">💳 ЮMoney</a>
+	   <p class="wallet-hint" data-i18n="walletHint">Проверьте номер кошелька перед отправкой - 4100119518078231</p>
+	   <p>______________________________________</p>
+
+  <p >📱 СБП (QR)</p>
+</div>
+
+<div id="sbp-qr-container" class="sbp-qr-container" style="display:block; margin-top: 12px;">
+  <img src="sbp-qr.png" alt="СБП QR-код" class="sbp-qr-img">
+  <p data-i18n="sbpHint">Отсканируйте QR в приложении банка</p>
+</div>
+	    <p style="margin-top:8px; font-size:12px; opacity:0.7;">
+      <a href="https://scholar.google.ru/citations?user=6pwhzagAAAAJ&hl=ru" target="_blank" rel="noopener noreferrer" class="author-link">Dmitry LAZURENKO</a>
+    </p>
+  </div>
+</div>
+
+<!-- ===== ONBOARDING / ИНСТРУКЦИЯ ПРИ ПЕРВОМ ЗАПУСКЕ ===== -->
+<div id="onboarding-overlay" class="onboarding-overlay" hidden>
+  <div class="onboarding-modal">
+    <button class="onboarding-close" id="onboarding-skip" aria-label="Пропустить инструкцию">&times;</button>
+    
+    <div class="onboarding-header">
+      <span class="app-icon"><img src="logo.svg" alt="Mimic Logo" style="width:100%; height:auto;"></span>
+      <h2 data-i18n="onboardingTitle">Добро пожаловать в МИМИК!</h2>
+    </div>
+    
+    <div class="onboarding-steps">
+      <!-- Шаг 1 -->
+      <div class="onboarding-step active" data-step="1">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <p data-i18n="onboardingStep1">Нажмите <strong>«Начать»</strong>, чтобы включить камеру</p>
+          <div class="step-hint">
+            <svg class="hint-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+            <span data-i18n="onboardingHint1">Кнопка внизу блока с камерой</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Шаг 2 -->
+      <div class="onboarding-step" data-step="2">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <p data-i18n="onboardingStep2">Посмотрите на эмоцию <strong>на экране слева</strong></p>
+          <div class="step-image-preview">
+            <img src="emotions/happy.jpg" alt="Пример эмоции" class="preview-img">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Шаг 3 -->
+      <div class="onboarding-step" data-step="3">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <p data-i18n="onboardingStep3">Постарайтесь показать <strong>такую же эмоцию</strong> перед камерой</p>
+          <div class="step-visual">
+            <span class="emoji-large">😊 → 🎥 → 😊</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Шаг 4 -->
+      <div class="onboarding-step" data-step="4">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <p data-i18n="onboardingStep4">При успехе получите баллы! <strong>⭐</strong></p>
+          <div class="step-animation">
+            <span class="star-burst">⭐✨⭐</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Шаг 5 -->
+      <div class="onboarding-step" data-step="5">
+        <div class="step-number">5</div>
+        <div class="step-content">
+          <p data-i18n="onboardingStep5">Переключайте эмоции стрелками <strong>⬅️ ➡️</strong></p>
+          <div class="step-arrows">
+            <button class="demo-arrow prev">⬅️</button>
+            <button class="demo-arrow next">➡️</button>
+          </div>
+        </div>
+      </div>
+    </div>
+	
+	      <!-- ШАГ 6: ДУЭТ -->
+      <div class="onboarding-step" data-step="6">
+        <div class="step-number">6</div>
+        <div class="step-content">
+          <p data-i18n="onboardingStep6">Играйте и тренируйтесь вместе в режиме Дуэт 👥</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="onboarding-footer">
+      <div class="step-dots" id="step-dots">
+        <span class="dot active" data-dot="1"></span>
+        <span class="dot" data-dot="2"></span>
+        <span class="dot" data-dot="3"></span>
+        <span class="dot" data-dot="4"></span>
+        <span class="dot" data-dot="5"></span>
+		<span class="dot" data-dot="6"></span>
+      </div>
+      <div class="onboarding-controls">
+        <button id="onboarding-prev" class="onboarding-btn secondary" disabled data-i18n="btnBack">Назад</button>
+        <button id="onboarding-next" class="onboarding-btn primary" data-i18n="btnNext">Далее</button>
+        <button id="onboarding-finish" class="onboarding-btn primary" hidden data-i18n="btnStart">Начать!</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== МОДАЛЬНОЕ ОКНО ОТЗЫВОВ ===== -->
+<div id="reviews-modal" class="modal-overlay">
+  <div class="modal-content reviews-modal">
+    <button class="modal-close" aria-label="Закрыть">&times;</button>
+    
+    <!-- ФИКСИРОВАННЫЙ ХЕДЕР (не прокручивается) -->
+    <div class="reviews-header" style="flex-shrink: 0;">
+      <h2 data-i18n="reviewsTitle">💬 Отзывы и предложения</h2>
+      <p class="reviews-desc" data-i18n="reviewsDesc">Поделитесь своим опытом использования тренажёра. Ваше мнение помогает проекту расти!</p>
+    </div>
+    
+    <!-- ПРОКРУЧИВАЕМЫЙ КОНТЕНТ (виджет) -->
+    <div id="cusdis_thread"
+      data-host="https://cusdis.com"
+      data-app-id="f4323905-ae54-4738-a431-3d4a6f1f2e82"
+      data-page-id="reviews-page"
+      data-page-url="https://mimic-trainer.mityasky.workers.dev/"
+      data-page-title="Отзывы МИМИК"
+      data-theme="auto">
+    </div>
+    
+    <script async src="https://cusdis.com/js/cusdis.es.js"></script>
+  </div>
+</div>
+<!-- ===== МОДАЛЬНОЕ ОКНО ДУЭТ ===== -->
+<div id="duel-modal" class="modal-overlay">
+  <div class="duel-content">
+  <button class="duel-close-btn" onclick="closeDuelMode()" aria-label="Закрыть дуэт-режим">×</button>
+    
+    <video id="duel-video" autoplay playsinline muted style="display:none;"></video>
+    
+    <!-- Оверлей с инструкциями и статусом -->
+    <div id="duel-ui-layer">
+      <div id="duel-status-text">Нажмите "Начать", чтобы запустить камеру</div>
+      <div id="duel-scores" class="hidden">
+        <div class="player-score p1">Игрок 1 (Лево)</div>
+        <div class="vs-badge">VS</div>
+        <div class="player-score p2">Игрок 2 (Право)</div>
+      </div>
+      
+      <!-- Результаты раунда -->
+      <div id="duel-result-card" class="hidden">
+        <div id="result-score">10/10</div>
+        <div id="result-text">Идеальное совпадение!</div>
+        <button onclick="nextDuelRound()" class="duel-btn-primary">🔄 Ещё раз</button>
+        <button onclick="closeDuelMode()" class="duel-btn-secondary">🚪 Выйти</button>
+      </div>
+    </div>
+
+    <!-- Кнопка старта внутри модалки -->
+    <button id="duel-start-btn" class="duel-btn-large" onclick="startDuelCamera()">🎥 Начать игру</button>
+  </div>
+</div>
+
+<!-- Fallback Overlay for Critical Errors -->
+<div id="critical-fallback" class="critical-fallback-overlay" hidden>
+  <div class="critical-fallback-content">
+    <div class="critical-fallback-icon">⚠️</div>
+    <h3 id="fallback-title">Требуется внимание</h3>
+    <p id="fallback-message">Произошла ошибка</p>
+    <!-- data-i18n -->
+    <button class="fallback-btn" onclick="location.reload()" data-i18n="fallbackReloadBtn">🔄 Перезагрузить страницу</button>
+  </div>
+</div>
+
+<!-- ===== МОДАЛЬНОЕ ОКНО "ЭМОЦИОНАЛЬНАЯ ДУЭЛЬ" ===== -->
+<div id="emotion-duel-modal" class="modal-overlay">
+  <div class="duel-content">
+    <!-- Видео с камеры -->
+    <video id="emotion-duel-video" autoplay playsinline muted></video>
+    <canvas id="emotion-duel-canvas"></canvas>
+    
+    <!-- UI слой -->
+    <div id="emotion-duel-ui">
+      
+      <!-- Целевая эмоция -->
+	  <div id="duel-emotion-banner" class="duel-emotion-banner" hidden>
+  <span id="duel-emotion-banner-text"></span>
+</div>
+      <div class="duel-target">
+        <img id="duel-emotion-image" class="duel-emotion-img" src="" alt="Target Emotion">
+        <div id="duel-emotion-name" class="duel-emotion-name"></div>
+      </div>
+      
+      <!-- Кнопка старта -->
+      <button id="duel-start-btn" class="duel-start-btn" onclick="startEmotionDuelCamera()" data-i18n="duelStartBtn">
+        🎯 Начали!
+      </button>
+      
+      <!-- Табло счёта -->
+      <div class="duel-scoreboard">
+        <div class="duel-player-score p1">
+          <div class="player-name" data-i18n="playerRight">Player 1</div>
+          <div class="score-value" id="duel-score-p1">0</div>
+          <div class="accuracy-bar" id="accuracy-p1"></div>
+        </div>
+        
+        <div class="duel-vs">
+          <div class="vs-text" data-i18n="vsBadge">VS</div>
+          <!-- <div class="target-to" data-i18n="duelTargetTo">до <span id="duel-target-to">10</span></div>-->
+        </div>
+        
+        <div class="duel-player-score p2">
+          <div class="player-name" data-i18n="playerLeft">Player 2)</div>
+          <div class="score-value" id="duel-score-p2">0</div>
+          <div class="accuracy-bar" id="accuracy-p2"></div>
+        </div>
+      </div>
+      
+      <!-- Статус игры -->
+      <div id="duel-status" class="duel-status"></div>
+      
+      <!-- Экран результатов -->
+      <div id="duel-result-screen" class="hidden">
+        <div class="trophy-animation">🏆</div>
+        <h2 class="duel-winner" id="duel-winner-text"></h2>
+        <div class="duel-final-score" id="duel-final-score"></div>
+        <div class="duel-result-buttons">
+          <button class="duel-btn-primary" onclick="restartEmotionDuel()" data-i18n="duelBtnRetry">Ещё раз</button>
+          <button class="duel-btn-secondary" onclick="closeEmotionDuel()" data-i18n="duelBtnExit">Выйти</button>
+        </div>
+      </div>
+      
+      <!-- Кнопка закрытия (крестик) -->
+      <button class="duel-close-btn" onclick="closeEmotionDuel()">×</button>
+      
+    </div>
+  </div>
+</div>
+
+<!-- ===== КНОПКА СОЦСЕТЕЙ И МОДАЛКА ===== -->
+<button id="social-btn" class="social-btn" aria-label="Социальные сети" title="Социальные сети">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="18" cy="5" r="3"></circle>
+    <circle cx="6" cy="12" r="3"></circle>
+    <circle cx="18" cy="19" r="3"></circle>
+    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+  </svg>
+</button>
+
+<div id="social-modal" class="modal-overlay" hidden>
+  <div class="modal-content social-modal">
+    <button class="modal-close" aria-label="Закрыть">&times;</button>
+    <h3 data-i18n="socialTitle">Мы в соцсетях</h3>
+    <div class="social-links">
+      <a href="https://t.me/mimictrainer" target="_blank" rel="noopener noreferrer" class="social-link telegram" aria-label="Telegram">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.04 15.39l-.37 5.15c.53 0 .76-.23 1.04-.5l2.5-2.43 5.18 3.82c.95.52 1.63.25 1.88-.89l3.42-16.08-.01-.01c.31-1.45-.51-2.01-1.43-1.67L1.99 8.59c-1.39.53-1.37 1.31-.24 1.66l5.02 1.57 11.62-7.33c.55-.33 1.05-.15.64.18"/></svg>
+        <span>Telegram</span>
+      </a>
+      <a href="https://max.ru/join/ac5m4UPRB7iuONZ4wvEHFJVRnE30Fkeiv1DFb6a7tBA" target="_blank" rel="noopener noreferrer" class="social-link max" aria-label="MAX">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+  <path d="M12 2C6.48 2 2 6.48 2 12c0 1.82.49 3.53 1.34 5L2 22l5.09-1.34C8.47 21.51 10.17 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.66 0-3.22-.45-4.57-1.24l-.33-.2-3.17.84.84-3.17-.2-.33C3.45 14.22 3 12.66 3 11c0-4.97 4.03-9 9-9s9 4.03 9 9-4.03 9-9 9z"/>
+</svg>
+        <span>MAX</span>
+      </a>
+      <a href="https://github.com/mityasky/mimic-trainer/tree/main" target="_blank" rel="noopener noreferrer" class="social-link github" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+        <span>GitHub</span>
+      </a>
+    </div>
+  </div>
+</div>
+<script src="lib/chart.min.js"></script>
+</body>
+</html>
